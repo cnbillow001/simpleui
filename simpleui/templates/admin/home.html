@@ -16,16 +16,30 @@
                     <div slot="header" class="clearfix quick-nav-card__header">
                         <span class="quick-nav-card__title" v-text="getLanuage('Quick navigation')"></span>
                     </div>
-                    <div class="clearfix quick-grid">
+                    <div class="clearfix quick-groups">
                         {% if "SIMPLEUI_HOME_QUICK"|get_config != False %}
 
 
-                        <div v-for="(c,j) in models" :key="c.name" class="quick-wrap">
-                            <a class="quick-link" href="javascript:;" @click="openTab(c,(j+1)+'')">
-                                <span class="icon" :class="c.icon"></span>
-                                <span class="card-name" v-text="c.name"></span>
-                            </a>
-                        </div>
+                        <section
+                                v-for="(group, gi) in quickGroups"
+                                :key="group.name + '-' + gi"
+                                class="quick-group">
+                            <header class="quick-group__header">
+                                <span class="quick-group__icon" :class="group.icon"></span>
+                                <span class="quick-group__title" v-text="group.name"></span>
+                            </header>
+                            <div class="quick-grid">
+                                <div
+                                        v-for="(c, j) in group.models"
+                                        :key="c.eid || (group.name + '-' + j)"
+                                        class="quick-wrap">
+                                    <a class="quick-link" href="javascript:;" @click="openTab(c, c.eid)">
+                                        <span class="icon" :class="c.icon"></span>
+                                        <span class="card-name" v-text="c.name"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
 
                         {% endif %}
                     </div>

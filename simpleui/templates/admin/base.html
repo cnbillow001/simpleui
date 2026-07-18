@@ -17,7 +17,7 @@
     <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2.1.2"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js"></script>
 
-    <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
     <link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static 'admin/css/rtl.css' %}{% endblock %}?_=20180905"/>{% endif %}
@@ -94,7 +94,18 @@
             theme: '',
         },
         created: function () {
-            this.theme = getCookie('theme');
+            var themePref = (typeof getThemePreference === 'function')
+                ? getThemePreference()
+                : {theme: getCookie('theme'), themeName: getCookie('theme_name')};
+            this.theme = themePref.theme || '';
+            if (!this.theme && themePref.themeName && window.themeUrl) {
+                var named = (window.SimpleuiThemes || []).find(function (t) {
+                    return t.text === themePref.themeName;
+                });
+                if (named && named.file) {
+                    this.theme = window.themeUrl + named.file;
+                }
+            }
 
             var self = this;
             //向父组件注册事件

@@ -124,8 +124,16 @@ html, body {
   margin: 0;
   color: inherit;
   background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+
+  &--text {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    user-select: none;
+  }
 
   svg {
     display: block;
@@ -458,7 +466,48 @@ html, body {
   letter-spacing: 0.01em;
 }
 
-.quick-grid {
+.quick-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.quick-group {
+  flex: 0 0 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.quick-group + .quick-group {
+  padding-top: 22px;
+  border-top: 1px solid #edf1f6;
+}
+
+.quick-group__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.quick-group__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #3c8dbc;
+  font-size: 14px;
+}
+
+.quick-group__title {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.quick-group .quick-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 14px;
@@ -525,21 +574,21 @@ html, body {
     background: linear-gradient(135deg, #eaf5ff 0%, #ddecff 100%);
     border-radius: 12px;
   }
+}
 
-  &:nth-child(4n + 2) .icon {
-    color: #16856f;
-    background: linear-gradient(135deg, #e7f8f3 0%, #d8f3eb 100%);
-  }
+.quick-group .quick-wrap:nth-child(4n + 2) .icon {
+  color: #16856f;
+  background: linear-gradient(135deg, #e7f8f3 0%, #d8f3eb 100%);
+}
 
-  &:nth-child(4n + 3) .icon {
-    color: #9a6818;
-    background: linear-gradient(135deg, #fff6df 0%, #ffedc2 100%);
-  }
+.quick-group .quick-wrap:nth-child(4n + 3) .icon {
+  color: #9a6818;
+  background: linear-gradient(135deg, #fff6df 0%, #ffedc2 100%);
+}
 
-  &:nth-child(4n) .icon {
-    color: #7756b3;
-    background: linear-gradient(135deg, #f1edff 0%, #e5dcff 100%);
-  }
+.quick-group .quick-wrap:nth-child(4n) .icon {
+  color: #7756b3;
+  background: linear-gradient(135deg, #f1edff 0%, #e5dcff 100%);
 }
 
 #home .info-card .el-card:not(.quick-nav-card) {
@@ -551,7 +600,7 @@ html, body {
     padding: 16px;
   }
 
-  .quick-grid {
+  .quick-group .quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
@@ -563,7 +612,7 @@ html, body {
 }
 
 @media screen and (max-width: 420px) {
-  .quick-grid {
+  .quick-group .quick-grid {
     grid-template-columns: 1fr;
   }
 }

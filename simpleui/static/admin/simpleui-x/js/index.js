@@ -220,8 +220,8 @@
                     }
                 }]
             },
-            //菜单里面的模块
-            models: [],
+            // 首页快捷操作，按菜单组分组
+            quickGroups: [],
             fontDialogVisible: false,
             fontSlider: 12,
             loading: false,
@@ -239,39 +239,8 @@
             fold: function (newValue, oldValue) {
                 // console.log(newValue)
             },
-            menus: function (newValue, oldValue) {
-                var self = this;
-
-                newValue.forEach(item => {
-                    if (item.id == '0') {
-                        return;
-                    }
-
-                    let models = [];
-
-                    function deep(menus) {
-                        menus.forEach(item => {
-                            //这是首页，不显示
-                            if (item.eid === "1") {
-                                return;
-                            }
-
-                            if (item.models) {
-                                deep(item.models);
-                            } else {
-                                //没有子级的时候，才加入到首页菜单中去
-                                models.push(item);
-                            }
-
-                        })
-
-                    }
-
-                    deep(newValue);
-
-                    self.models = models;
-
-                });
+            menus: function (newValue) {
+                this.quickGroups = this.buildQuickGroups(newValue);
             }
             /*,
             tabs: function (newValue, oldValue) {
@@ -317,11 +286,22 @@
             menus = this.handlerMenus(menus);
 
             this.menus = window.menus
+            this.quickGroups = this.buildQuickGroups(this.menus);
 
-            this.theme = getCookie('theme');
-            this.themeName = getCookie('theme_name');
-            if (!this.theme && this.themeName === 'Default') {
-                this.theme = window.themeUrl + 'default.css';
+            var themePref = (typeof getThemePreference === 'function')
+                ? getThemePreference()
+                : {theme: getCookie('theme'), themeName: getCookie('theme_name')};
+            this.theme = themePref.theme || '';
+            this.themeName = themePref.themeName || '';
+            if (!this.theme && this.themeName) {
+                var named = (window.SimpleuiThemes || []).find(function (t) {
+                    return t.text === themePref.themeName;
+                });
+                if (named && named.file) {
+                    this.theme = window.themeUrl + named.file;
+                } else if (this.themeName === 'Default') {
+                    this.theme = window.themeUrl + 'default.css';
+                }
             }
 
 
@@ -359,6 +339,48 @@
             });
         },
         methods: {
+            buildQuickGroups: function (menus) {
+                var groups = [];
+
+                function collectLeaves(menuItem, leaves) {
+                    if (!menuItem || menuItem.id === '0' || menuItem.eid === '1') {
+                        return;
+                    }
+
+                    if (menuItem.models && menuItem.models.length) {
+                        menuItem.models.forEach(function (child) {
+                            collectLeaves(child, leaves);
+                        });
+                    } else if (menuItem.url) {
+                        leaves.push(menuItem);
+                    }
+                }
+
+                (menus || []).forEach(function (item) {
+                    if (item.id === '0' || item.eid === '1') {
+                        return;
+                    }
+
+                    var leaves = [];
+                    if (item.models && item.models.length) {
+                        item.models.forEach(function (child) {
+                            collectLeaves(child, leaves);
+                        });
+                    } else {
+                        collectLeaves(item, leaves);
+                    }
+
+                    if (leaves.length) {
+                        groups.push({
+                            name: item.name,
+                            icon: item.icon,
+                            models: leaves
+                        });
+                    }
+                });
+
+                return groups;
+            },
             handlerMenus(menus) {
                 let self = this;
                 menus.forEach(item => {
@@ -428,8 +450,12 @@
                     this.theme = '';
                 }
                 this.themeName = item.text;
-                setCookie('theme', this.theme);
-                setCookie('theme_name', item.text);
+                if (typeof setThemePreference === 'function') {
+                    setThemePreference(this.theme, item.text);
+                } else {
+                    setCookie('theme', this.theme);
+                    setCookie('theme_name', item.text);
+                }
 
                 // Collapsed flyout is outside .menu; sync colors from theme preview / sidebar
                 this.applyMenuPopupTheme(item);
@@ -786,11 +812,10 @@
                 this.logoutLoading = true;
 
                 try {
+                    // Only clear tab state; theme preference is kept in localStorage/cookies.
                     delete sessionStorage['tabs'];
                 } catch (e) {
                 }
-                setCookie('theme', '');
-                setCookie('theme_name', '');
 
                 var form = document.querySelector("#logout_form");
                 if (form) {

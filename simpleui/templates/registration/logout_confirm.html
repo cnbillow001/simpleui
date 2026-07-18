@@ -7,11 +7,14 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f5f7fa">
+    <meta name="theme-color" content="#3c8dbc">
     <title>{% trans 'Log out' %} - {{ site_title }}</title>
     {% include 'admin/includes/css-part.html' %}
-    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/login.css' %}?_=6.1">
-    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/logout.css' %}?_=1.1">
+    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/login.css' %}?_=6.5">
+    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/logout.css' %}?_=1.4">
+    <script>
+        window.SIMPLEUI_DEFAULT_THEME = "{{ "SIMPLEUI_DEFAULT_THEME"|get_config|default:'admin.lte.css' }}";
+    </script>
 </head>
 <body class="login-page logout-confirm-page">
 <main class="login-shell">
@@ -35,7 +38,9 @@
         © {% now "Y" %} {{ site_header }}
     </footer>
 </main>
-<script src="{% static 'admin/simpleui-x/js/cookie.js' %}"></script>
+<script src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
+<script src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
+<script src="{% static 'admin/simpleui-x/js/login-theme.js' %}?_={% get_version %}"></script>
 <script>
     (function () {
         var form = document.querySelector('.logout-confirm__actions');
@@ -43,13 +48,10 @@
             return;
         }
         form.addEventListener('submit', function () {
+            // Only clear tab state; theme preference is kept in localStorage/cookies.
             try {
                 delete sessionStorage['tabs'];
             } catch (e) {}
-            if (typeof setCookie === 'function') {
-                setCookie('theme', '');
-                setCookie('theme_name', '');
-            }
         });
     })();
 </script>
