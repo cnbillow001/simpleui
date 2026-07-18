@@ -451,18 +451,6 @@ html, body {
   gap: 12px;
 }
 
-.quick-nav-card__heading-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: #fff;
-  background: linear-gradient(135deg, #3c8dbc 0%, #409eff 100%);
-  border-radius: 10px;
-  box-shadow: 0 6px 14px rgba(60, 141, 188, 0.24);
-}
-
 .quick-nav-card__title {
   color: #25364a;
   font-size: 16px;
@@ -622,16 +610,27 @@ html, body {
   }
 }
 
+/* Collapsed flyout: colors follow theme via --su-menu-* (themes + JS sync) */
+:root {
+  --su-menu-bg: #304156;
+  --su-menu-color: #bfcbd9;
+  --su-menu-hover-bg: #001528;
+  --su-menu-hover-color: #fff;
+  --su-menu-active: #409eff;
+  --su-menu-title-hover-bg: #263445;
+  --su-menu-border: rgba(191, 203, 217, 0.12);
+}
+
 .el-menu--vertical:not(.el-menu) {
   padding-left: 8px;
 
+  > .el-menu.el-menu--popup,
   > .el-menu--popup {
     min-width: 208px;
     padding: 8px;
     overflow: hidden;
-    /* Match Default theme sidebar; other themes override via theme CSS */
-    background: rgb(48, 65, 86) !important;
-    border: 1px solid rgba(191, 203, 217, 0.12);
+    background: var(--su-menu-bg) !important;
+    border: 1px solid var(--su-menu-border);
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(15, 23, 42, 0.28);
   }
@@ -640,7 +639,7 @@ html, body {
     height: 44px;
     margin: 2px 0;
     padding: 0 14px !important;
-    color: rgb(191, 203, 217) !important;
+    color: var(--su-menu-color) !important;
     line-height: 44px;
     white-space: nowrap;
     background: transparent !important;
@@ -648,14 +647,14 @@ html, body {
     transition: color 0.18s ease, background-color 0.18s ease;
 
     &:hover, &:focus {
-      color: #fff !important;
-      background: #001528 !important;
+      color: var(--su-menu-hover-color) !important;
+      background: var(--su-menu-hover-bg) !important;
     }
 
     &.is-active {
-      color: rgb(64, 158, 255) !important;
-      background: rgba(64, 158, 255, 0.16) !important;
-      box-shadow: inset 3px 0 0 rgb(64, 158, 255);
+      color: var(--su-menu-active) !important;
+      background: var(--su-menu-active-bg, rgba(64, 158, 255, 0.16)) !important;
+      box-shadow: inset 3px 0 0 var(--su-menu-active);
     }
   }
 
@@ -663,14 +662,14 @@ html, body {
     height: 44px;
     margin: 2px 0;
     padding: 0 14px !important;
-    color: rgb(191, 203, 217) !important;
+    color: var(--su-menu-color) !important;
     line-height: 44px;
     background: transparent !important;
     border-radius: 7px;
 
     &:hover {
-      color: #fff !important;
-      background: #263445 !important;
+      color: var(--su-menu-hover-color) !important;
+      background: var(--su-menu-title-hover-bg) !important;
     }
   }
 
@@ -680,6 +679,80 @@ html, body {
     color: inherit;
     font-size: 14px;
     text-align: center;
+  }
+}
+
+.pwd-dialog {
+  .el-dialog__body {
+    padding: 8px 16px 16px;
+  }
+
+  iframe {
+    display: block;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+  }
+}
+
+.logout-dialog {
+  border-radius: 14px;
+  overflow: hidden;
+
+  .el-dialog__header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    padding: 0;
+    width: 100%;
+    border: none;
+  }
+
+  .el-dialog__title {
+    display: none;
+  }
+
+  .el-dialog__headerbtn {
+    top: 12px;
+    right: 12px;
+  }
+
+  .el-dialog__body {
+    padding: 28px 20px 2px;
+  }
+
+  .el-dialog__footer {
+    padding: 12px 20px 16px;
+  }
+}
+
+.logout-dialog__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.logout-dialog__desc {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+  color: #303133;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.logout-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  .el-button {
+    min-width: 64px;
+    padding: 7px 14px;
+    border-radius: 6px;
   }
 }
 

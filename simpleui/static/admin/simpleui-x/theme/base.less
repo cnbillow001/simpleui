@@ -164,7 +164,19 @@ a:link, a:visited {
 }
 
 /* Collapsed sidebar flyout menus are appended outside .menu */
+:root {
+  --su-menu-bg: @menu-background;
+  --su-menu-color: @menu-color;
+  --su-menu-hover-bg: @menu-background-hover;
+  --su-menu-hover-color: @menu-color-hover;
+  --su-menu-active: @primary;
+  --su-menu-active-bg: fade(@primary, 16%);
+  --su-menu-title-hover-bg: @menu-title-background-color-hover;
+  --su-menu-border: fade(@menu-color, 12%);
+}
+
 .el-menu--vertical:not(.el-menu) {
+  > .el-menu.el-menu--popup,
   > .el-menu--popup {
     background: @menu-background !important;
     border-color: fade(@menu-color, 12%) !important;

@@ -17,7 +17,7 @@
 
     {% block css %}
         {% include 'admin/includes/css-part.html' %}
-        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/index.css' %}?_=3.9">
+        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/index.css' %}?_=4.7">
         <link rel="stylesheet" href="{% static 'admin/simpleui-x/waves/waves.min.css' %}?_=2.1">
     {% endblock %}
     {% block head %}
@@ -53,11 +53,11 @@
 {% endblock %}
 <div id="main" @click="mainClick($event)" v-block>
     {% block theme_css %}
-        <link v-if="theme && theme!=''" rel="stylesheet" :href="theme">
+        <link v-if="theme && theme!=''" rel="stylesheet" :href="(theme.split('?')[0]) + '?_=popup2'">
 
         {% if "SIMPLEUI_DEFAULT_THEME"|get_config %}
             <link v-else rel="stylesheet"
-                  href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}">
+                  href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}?_=popup2">
         {% endif %}
     {% endblock %}
     <!-- mobile -->
@@ -112,7 +112,8 @@
                 <el-header class="navbar" style="font-size: 12px;padding: 10px;height: auto">
                     <div class="float-wrap">
                         <div class="left">
-                            <el-button v-waves circle icon="fas fa-bars"
+                            <el-button v-waves circle
+                                       :icon="fold ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
                                        style="margin-right: 10px;border: none" @click="foldClick()"></el-button>
                             {% block breadcrumb %}
                                 <el-breadcrumb v-if="!mobile" style="display: inline-block;" separator="/">
@@ -120,8 +121,8 @@
                                         <el-breadcrumb-item><i :class="menus[0].icon"
                                                                :key="menus[0].name"></i>{{ menus[0].name }}
                                         </el-breadcrumb-item>
-                                        <el-breadcrumb-item v-for="item in breadcrumbs"
-                                                            :key="item">
+                                        <el-breadcrumb-item v-for="(item, bIndex) in breadcrumbs"
+                                                            :key="(item.name || '') + '-' + bIndex">
                                             <span :class="getIcon(item.name,item.icon)"></span>
                                             <span v-text="item.name"></span>
                                         </el-breadcrumb-item>
@@ -238,8 +239,21 @@
                 v-text="item.text"></span>
         </li>
     </ul>
-    <el-dialog title="{% trans 'Change password' %}" :visible.sync="pwdDialog.show">
-        <iframe frameborder="0" :src="pwdDialog.url" width="100%" height="500"></iframe>
+    <el-dialog title="{% trans 'Change password' %}" :visible.sync="pwdDialog.show" width="520px"
+               custom-class="pwd-dialog" :close-on-click-modal="false">
+        <iframe frameborder="0" :src="pwdDialog.url" width="100%" height="420"></iframe>
+    </el-dialog>
+
+    <el-dialog :visible.sync="logoutDialogVisible" width="360px" custom-class="logout-dialog"
+               :show-close="true" :close-on-click-modal="false" append-to-body>
+        <div class="logout-dialog__body">
+            <p class="logout-dialog__desc" v-text="getLanuage('Are you sure you want to log out?')"></p>
+        </div>
+        <span slot="footer" class="logout-dialog__footer">
+            <el-button size="small" @click="logoutDialogVisible=false" v-text="getLanuage('ConfirmNo')"></el-button>
+            <el-button size="small" type="primary" :loading="logoutLoading" @click="confirmLogout"
+                       v-text="getLanuage('ConfirmYes')"></el-button>
+        </span>
     </el-dialog>
 
     {% block theme_dialog %}
@@ -286,7 +300,9 @@
                 name: '{{ title }}',
                 icon: '{{ icon }}',
                 active: true,
-                eid: '1'
+                eid: '1',
+                url: '/',
+                breadcrumbs: []
             }
         {% else %}
             var home = {
@@ -294,7 +310,9 @@
                 index: '1',
                 eid: '1',
                 name: "{% trans 'Home' %}",
-                icon: 'fas fa-home'
+                icon: 'fas fa-home',
+                url: '/',
+                breadcrumbs: []
             };
         {% endif %}
         menus.unshift(home);
@@ -330,9 +348,9 @@
             src="{% static 'admin/simpleui-x/automatic/dicts.js' %}?_={% get_version %}"></script>
     <script type="text/javascript"
             src="{% static 'admin/simpleui-x/automatic/segment.js' %}?_={% get_version %}"></script>
-    <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2026.07.18"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2026.07.18b"></script>
     <script type="text/javascript"
-            src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_=2026.07.18"
+            src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_=2026.07.18b"
             onerror="localeError()"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
@@ -340,7 +358,7 @@
             src="{% static 'admin/simpleui-x/waves/waves.min.js' %}?_={% get_version %}"></script>
     {% block index_js %}
         <script type="text/javascript" src="{% static 'admin/simpleui-x/js/menu.js' %}?_={% get_version %}"></script>
-        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.18b"></script>
+        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.18f"></script>
     {% endblock %}
     {% block autoupdate %}
 

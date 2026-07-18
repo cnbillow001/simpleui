@@ -31,7 +31,7 @@ var Lanuages = {
     "ConfirmNo": "Cancel",
     "Tips": "Tips",
     "Log out": "Log out",
-    "Are you sure you want to log out?": "Are you sure you want to log out?",
+    "Are you sure you want to log out?": "Do you want to log out?",
     "Are you sure you want them all closed": "Are you sure you want them all closed?",
 
     "to": "",

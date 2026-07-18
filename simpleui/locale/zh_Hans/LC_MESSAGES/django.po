@@ -41,3 +41,15 @@ msgstr "便捷运维"
 
 msgid "Data Management"
 msgstr "数据管理"
+
+msgid "Logged out"
+msgstr "已安全退出"
+
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr "您已退出系统，欢迎下次再来。"
+
+msgid "Log in again"
+msgstr "重新登录"
+
+msgid "seconds to redirect…"
+msgstr "秒后自动跳转…"

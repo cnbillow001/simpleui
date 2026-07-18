@@ -1,20 +1,54 @@
-{% load i18n %}
+{% load i18n static simpletags %}
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'en-us' }}">
+<html lang="{{ LANGUAGE_CODE|default:'zh-hans' }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url={% url 'admin:login' %}">
-    <title>{% trans 'Log in' %}</title>
-    <style>
-        html, body {
-            margin: 0;
-            min-height: 100%;
-            background: #f8fafc;
-        }
-    </style>
-    <script>
-        location.replace("{% url 'admin:login' %}");
-    </script>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fa">
+    <title>{% trans 'Logged out' %} - {{ site_title }}</title>
+    {% include 'admin/includes/css-part.html' %}
+    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/login.css' %}?_=6.1">
+    <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/logout.css' %}?_=1.0">
 </head>
-<body></body>
+<body class="login-page logout-tip-page">
+<main class="login-shell">
+    <div class="login-card logout-tip-card">
+        <div class="logout-tip__icon" aria-hidden="true">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1 class="logout-tip__title">{% trans 'Logged out' %}</h1>
+        <p class="logout-tip__desc">{% trans 'Thanks for spending some quality time with the Web site today.' %}</p>
+        <a class="logout-tip__btn" href="{% url 'admin:login' %}">
+            {% trans 'Log in again' %}
+        </a>
+        <p class="logout-tip__hint">
+            <span id="logout-countdown">3</span>
+            {% trans 'seconds to redirect…' %}
+        </p>
+    </div>
+    <footer class="login-footer">
+        © {% now "Y" %} {{ site_header }}
+    </footer>
+</main>
+<script>
+    (function () {
+        var loginUrl = "{% url 'admin:login' %}";
+        var seconds = 3;
+        var el = document.getElementById('logout-countdown');
+        var timer = setInterval(function () {
+            seconds -= 1;
+            if (el) {
+                el.textContent = String(seconds);
+            }
+            if (seconds <= 0) {
+                clearInterval(timer);
+                location.replace(loginUrl);
+            }
+        }, 1000);
+    })();
+</script>
+</body>
 </html>

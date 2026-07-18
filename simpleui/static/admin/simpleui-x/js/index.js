@@ -13,10 +13,18 @@
         var hash = location.hash;
         hash = hash.substring(1)
 
+        // Home hash: only show "首页"
+        if (!hash || hash === '/') {
+            app.tabModel = '0';
+            app.menuActive = '1';
+            app.breadcrumbs = [];
+            return;
+        }
+
         for (var i = 0; i < app.menuData.length; i++) {
             var item = app.menuData[i]
-            if ((item.url || '/') == hash) {
-
+            // Avoid matching items without url against "/"
+            if (item.url && item.url == hash) {
                 app.openTab(item, item.eid, true, false);
                 break;
             }
@@ -24,9 +32,26 @@
     }
 
     function changeUrl(data) {
-        if (data.url && data.url.indexOf('http') != 0) {
-            location.hash = '#' + (data.url || '/')
+        if (data.id == '0' || data.eid == '1' || data.url === '/' || !data.url) {
+            if (location.hash && location.hash !== '#' && location.hash !== '#/') {
+                location.hash = '#/';
+            }
+            return;
         }
+        if (data.url && data.url.indexOf('http') != 0) {
+            location.hash = '#' + data.url;
+        }
+    }
+
+    function isHomeTab(item) {
+        return !!(item && (item.id == '0' || item.eid == '1' || item.url === '/'));
+    }
+
+    function resolveBreadcrumbs(item) {
+        if (!item || isHomeTab(item) || !item.breadcrumbs) {
+            return [];
+        }
+        return item.breadcrumbs;
     }
 
     window.callback = function () {
@@ -118,6 +143,8 @@
             breadcrumbs: [],
             language: window.language,
             pwdDialog: {},
+            logoutDialogVisible: false,
+            logoutLoading: false,
             themeDialogVisible: false,
             small: false,
             themes: SimpleuiThemes,
@@ -314,6 +341,10 @@
                 if (window.renderCallback) {
                     window.renderCallback(this);
                 }
+                var themeItem = (window.SimpleuiThemes || []).find(function (t) {
+                    return t.text === self.themeName;
+                }) || {menu: null, file: self.theme};
+                self.applyMenuPopupTheme(themeItem);
             });
         },
         methods: {
@@ -389,10 +420,118 @@
                 setCookie('theme', this.theme);
                 setCookie('theme_name', item.text);
 
+                // Collapsed flyout is outside .menu; sync colors from theme preview / sidebar
+                this.applyMenuPopupTheme(item);
+
                 var self = this;
                 //通知子页面
                 window.themeEvents.forEach(handler => {
                     handler(self.theme)
+                });
+            },
+            applyMenuPopupTheme: function (item) {
+                var root = document.documentElement;
+                var menuVars = [
+                    '--su-menu-bg',
+                    '--su-menu-color',
+                    '--su-menu-hover-bg',
+                    '--su-menu-hover-color',
+                    '--su-menu-active',
+                    '--su-menu-active-bg',
+                    '--su-menu-title-hover-bg',
+                    '--su-menu-border'
+                ];
+
+                function clearInline() {
+                    menuVars.forEach(function (name) {
+                        root.style.removeProperty(name);
+                    });
+                }
+
+                function parseRgb(color) {
+                    if (!color) {
+                        return null;
+                    }
+                    var hex = color.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+                    if (hex) {
+                        var h = hex[1];
+                        if (h.length === 3) {
+                            h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+                        }
+                        return {
+                            r: parseInt(h.slice(0, 2), 16),
+                            g: parseInt(h.slice(2, 4), 16),
+                            b: parseInt(h.slice(4, 6), 16)
+                        };
+                    }
+                    var m = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+                    if (!m) {
+                        return null;
+                    }
+                    return {r: +m[1], g: +m[2], b: +m[3]};
+                }
+
+                function isLight(color) {
+                    var rgb = parseRgb(color);
+                    if (!rgb) {
+                        return false;
+                    }
+                    return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000 > 170;
+                }
+
+                function applyPalette(bg, color) {
+                    if (bg) {
+                        root.style.setProperty('--su-menu-bg', bg);
+                    }
+                    if (isLight(bg)) {
+                        root.style.setProperty('--su-menu-color', color || '#606266');
+                        root.style.setProperty('--su-menu-hover-bg', 'rgba(0, 0, 0, 0.06)');
+                        root.style.setProperty('--su-menu-hover-color', '#303133');
+                        root.style.setProperty('--su-menu-title-hover-bg', 'rgba(0, 0, 0, 0.06)');
+                        root.style.setProperty('--su-menu-border', 'rgba(0, 0, 0, 0.08)');
+                    } else if (bg) {
+                        root.style.setProperty('--su-menu-color', color || '#bfcbd9');
+                        root.style.setProperty('--su-menu-hover-bg', 'rgba(0, 0, 0, 0.35)');
+                        root.style.setProperty('--su-menu-hover-color', '#ffffff');
+                        root.style.setProperty('--su-menu-title-hover-bg', 'rgba(0, 0, 0, 0.28)');
+                        root.style.setProperty('--su-menu-border', 'rgba(255, 255, 255, 0.12)');
+                    }
+                }
+
+                function syncFromSidebar() {
+                    var menu = document.querySelector('.menu');
+                    if (!menu) {
+                        return;
+                    }
+                    var bg = getComputedStyle(menu).backgroundColor;
+                    var textEl = menu.querySelector('.el-submenu__title') || menu.querySelector('.el-menu-item');
+                    var color = textEl ? getComputedStyle(textEl).color : '';
+                    if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
+                        applyPalette(bg, color);
+                    }
+                    var activeEl = menu.querySelector('.el-menu .is-active') || menu.querySelector('.is-active');
+                    if (activeEl) {
+                        root.style.setProperty('--su-menu-active', getComputedStyle(activeEl).color);
+                    }
+                }
+
+                if (item && item.menu) {
+                    applyPalette(item.menu, null);
+                } else {
+                    clearInline();
+                }
+
+                var self = this;
+                this.$nextTick(function () {
+                    var link = document.querySelector('#main link[rel="stylesheet"]');
+                    var finish = function () {
+                        syncFromSidebar();
+                    };
+                    if (link && self.theme) {
+                        link.addEventListener('load', finish, {once: true});
+                    }
+                    setTimeout(finish, 120);
+                    setTimeout(finish, 400);
                 });
             },
             openUrl: function (url) {
@@ -428,9 +567,11 @@
                 var item = this.tabs[tab.index];
                 var index = item.index;
                 this.menuActive = String(index);
-                this.breadcrumbs = item.breadcrumbs;
-                if (tab.index == '0') {
-                    item.url = '/'
+                if (tab.index == '0' || isHomeTab(item)) {
+                    item.url = '/';
+                    this.breadcrumbs = [];
+                } else {
+                    this.breadcrumbs = resolveBreadcrumbs(item);
                 }
                 changeUrl(item);
             },
@@ -445,12 +586,15 @@
                             if (temp) {
                                 next = temp.id;
                                 self.menuActive = temp.index;
-                                self.breadcrumbs = temp.breadcrumbs;
+                                self.breadcrumbs = resolveBreadcrumbs(temp);
                                 changeUrl(temp)
                             }
                         }
                     });
                     this.tabModel = next;
+                    if (next == '0') {
+                        this.breadcrumbs = [];
+                    }
 
                     if (targetName != 0) {
                         this.tabs = this.tabs.filter(tab => tab.id !== targetName);
@@ -465,9 +609,9 @@
                     window.open(data.url);
                     return;
                 }
-                if (data.breadcrumbs) {
-                    this.breadcrumbs = data.breadcrumbs;
-                }
+
+                this.breadcrumbs = resolveBreadcrumbs(data);
+
                 //如果data没有eid，就直接打开或者添加，根据url
                 if (!data.eid) {
                     data.eid = new Date().getTime() + "" + Math.random();
@@ -488,7 +632,13 @@
                     return;
                 }
 
-                this.breadcrumbs = data.breadcrumbs;
+                if (isHomeTab(data)) {
+                    this.tabModel = '0';
+                    this.breadcrumbs = [];
+                    changeUrl(data);
+                    return;
+                }
+
                 var exists = null;
                 //判断是否存在，存在就直接打开
                 for (var i = 0; i < this.tabs.length; i++) {
@@ -501,6 +651,7 @@
 
                 if (exists) {
                     this.tabModel = exists.id;
+                    this.breadcrumbs = resolveBreadcrumbs(exists);
                 } else {
                     //其他的网址loading会一直转
                     if (data.url && data.url.indexOf('http') != 0) {
@@ -565,44 +716,25 @@
             }
             ,
             logout: function () {
-                this.$confirm(getLanuage('Are you sure you want to log out?'), getLanuage('Tips'), {
-                    confirmButtonText: getLanuage('ConfirmYes'),
-                    cancelButtonText: getLanuage('ConfirmNo'),
-                    type: 'warning'
-                }).then(function () {
-                    //清除cookie主题设置和sessionStore数据
-                    delete sessionStorage['tabs'];
-                    setCookie('theme', '');
-                    setCookie('theme_name', '');
+                this.logoutLoading = false;
+                this.logoutDialogVisible = true;
+            },
+            confirmLogout: function () {
+                this.logoutLoading = true;
 
-                    var form = document.querySelector("#logout_form");
-                    var loginUrl = (window.urls && window.urls.login) || '/admin/login/';
-                    var goLogin = function () {
-                        location.replace(loginUrl);
-                    };
+                //清除cookie主题设置和sessionStore数据
+                delete sessionStorage['tabs'];
+                setCookie('theme', '');
+                setCookie('theme_name', '');
 
-                    // Prefer fetch so the blank logged_out page never paints.
-                    if (window.fetch && form) {
-                        var data = new FormData(form);
-                        fetch(form.action, {
-                            method: 'POST',
-                            body: data,
-                            credentials: 'same-origin',
-                            redirect: 'manual'
-                        }).then(goLogin).catch(function () {
-                            form.submit();
-                        });
-                        return;
-                    }
+                var form = document.querySelector("#logout_form");
+                if (form) {
+                    form.submit();
+                    return;
+                }
 
-                    if (form) {
-                        form.submit();
-                    } else {
-                        goLogin();
-                    }
-                }).catch(function () {
-
-                });
+                this.logoutLoading = false;
+                location.replace((window.urls && window.urls.login) || '/admin/login/');
             }
             ,
             goIndex: function (url) {
