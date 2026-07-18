@@ -673,51 +673,54 @@ html, body {
   --su-menu-border: rgba(191, 203, 217, 0.12);
 }
 
+/* Collapsed flyout: keep close to expanded sidebar, avoid heavy active chrome */
 .el-menu--vertical:not(.el-menu) {
-  padding-left: 8px;
+  padding-left: 2px;
 
   > .el-menu.el-menu--popup,
   > .el-menu--popup {
-    min-width: 208px;
-    padding: 8px;
+    min-width: 168px;
+    padding: 4px 0;
     overflow: hidden;
     background: var(--su-menu-bg) !important;
     border: 1px solid var(--su-menu-border);
-    border-radius: 10px;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.28);
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.22);
   }
 
   .el-menu-item {
-    height: 44px;
-    margin: 2px 0;
-    padding: 0 14px !important;
+    height: 40px;
+    margin: 0;
+    padding: 0 16px !important;
     color: var(--su-menu-color) !important;
-    line-height: 44px;
+    line-height: 40px;
     white-space: nowrap;
     background: transparent !important;
-    border-radius: 7px;
-    transition: color 0.18s ease, background-color 0.18s ease;
+    border-radius: 0;
+    box-shadow: none !important;
+    transition: color 0.15s ease, background-color 0.15s ease;
 
     &:hover, &:focus {
       color: var(--su-menu-hover-color) !important;
       background: var(--su-menu-hover-bg) !important;
+      box-shadow: none !important;
     }
 
     &.is-active {
       color: var(--su-menu-active) !important;
-      background: var(--su-menu-active-bg, rgba(64, 158, 255, 0.16)) !important;
-      box-shadow: inset 3px 0 0 var(--su-menu-active);
+      background: var(--su-menu-hover-bg) !important;
+      box-shadow: none !important;
     }
   }
 
   .el-submenu__title {
-    height: 44px;
-    margin: 2px 0;
-    padding: 0 14px !important;
+    height: 40px;
+    margin: 0;
+    padding: 0 16px !important;
     color: var(--su-menu-color) !important;
-    line-height: 44px;
+    line-height: 40px;
     background: transparent !important;
-    border-radius: 7px;
+    border-radius: 0;
 
     &:hover {
       color: var(--su-menu-hover-color) !important;
@@ -726,10 +729,10 @@ html, body {
   }
 
   .menu-icon {
-    width: 22px;
-    margin-right: 10px;
+    width: 18px;
+    margin-right: 8px;
     color: inherit;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
   }
 }

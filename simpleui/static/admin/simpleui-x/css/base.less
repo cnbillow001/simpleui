@@ -160,7 +160,7 @@ tbody tr:hover th {
 .form-row {
   border-bottom: none !important;
   // display: flex;
-  align-items: center;
+  align-items: flex-start;
 
   // div:first-child{
   //   display: flex;
@@ -179,6 +179,127 @@ tbody tr:hover th {
   .fileBox {
     flex: 1;
   }
+}
+
+/* SplitDateTime: align 日期 / 时间 labels and inputs in two neat rows */
+.flex-container {
+  align-items: flex-start;
+}
+
+.flex-container > p.datetime {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: fit-content;
+  max-width: 100%;
+}
+
+p.datetime {
+  display: grid;
+  grid-template-columns: 3.5em max-content max-content;
+  column-gap: 6px;
+  row-gap: 8px;
+  justify-content: start;
+  align-items: center;
+  margin: 0;
+  padding: 2px 0 0;
+  line-height: normal;
+  font-weight: normal;
+  color: inherit;
+
+  > br {
+    display: none;
+  }
+}
+
+.aligned p.datetime > label,
+p.datetime > label {
+  display: inline-block !important;
+  box-sizing: border-box;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: end;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #606266;
+  white-space: nowrap;
+}
+
+p.datetime input.vDateField,
+p.datetime input.vTimeField,
+.form-row .datetime input.vDateField,
+.form-row .datetime input.vTimeField {
+  box-sizing: border-box;
+  width: 9.5em;
+  min-width: 9.5em;
+  min-height: 34px;
+  height: 34px;
+  margin: 0 !important;
+  padding: 4px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+p.datetime .datetimeshortcuts {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1;
+}
+
+p.datetime .timezonewarning,
+p.datetime div.help {
+  grid-column: 1 / -1;
+}
+
+/* Native selects: avoid CJK glyph clipping from Django's 1.875rem height */
+#content-main select:not([multiple]),
+.form-row select:not([multiple]),
+.aligned select:not([multiple]),
+.related-widget-wrapper select:not([multiple]),
+.inline-group select:not([multiple]) {
+  box-sizing: border-box;
+  min-height: 36px;
+  height: 36px;
+  padding: 4px 28px 4px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+/* Django autocomplete / Select2 */
+.select2-container--admin-autocomplete .select2-selection--single,
+.select2-container .select2-selection--single {
+  box-sizing: border-box;
+  height: 36px !important;
+  border-radius: 4px !important;
+}
+
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__rendered,
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 34px !important;
+  padding-left: 10px !important;
+  padding-right: 24px !important;
+  font-size: 14px;
+}
+
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__arrow,
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 34px !important;
+}
+
+.select2-container--admin-autocomplete .select2-results__option,
+.select2-results__option {
+  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .submit-row {
