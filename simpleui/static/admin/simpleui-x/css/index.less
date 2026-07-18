@@ -756,6 +756,124 @@ html, body {
   }
 }
 
+.account-pwd-dialog {
+  .el-dialog__body {
+    padding: 20px 20px 8px;
+  }
+
+  .el-form-item {
+    margin-bottom: 18px;
+  }
+
+  .el-form-item__label {
+    color: #606266;
+    font-weight: 500;
+  }
+
+  .el-form-item__error {
+    position: static;
+    padding-top: 4px;
+    line-height: 1.4;
+  }
+}
+
+.account-pwd-dialog__alert {
+  margin-bottom: 14px;
+}
+
+.account-pwd-dialog__error {
+  margin-top: 4px;
+  color: #f56c6c;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.account-pwd-dialog--confirm {
+  .el-dialog__header {
+    position: static;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #ebeef5;
+  }
+
+  .el-dialog__title {
+    display: block;
+    color: #303133;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .el-dialog__headerbtn {
+    top: 16px;
+    right: 16px;
+  }
+
+  .el-dialog__body {
+    padding: 20px 20px 8px;
+  }
+}
+
+.account-confirm-dialog__body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-confirm-dialog__icon {
+  flex: 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  color: #e6a23c;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.account-confirm-dialog__text {
+  margin: 0;
+  padding: 1px 0 0;
+  color: #606266;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.account-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  .el-button {
+    min-width: 64px;
+    padding: 7px 14px;
+    border-radius: 6px;
+  }
+
+  .el-button--primary,
+  .el-button--primary.is-plain {
+    color: #fff !important;
+  }
+
+  .el-button:not(.el-button--primary) {
+    color: #606266;
+    background-color: #fff;
+    border-color: #dcdfe6;
+
+    &:hover,
+    &:focus {
+      color: #303133 !important;
+      background-color: #f5f7fa !important;
+      border-color: #c0c4cc !important;
+    }
+
+    &:active {
+      color: #303133 !important;
+      background-color: #eef1f6 !important;
+      border-color: #b8bcc4 !important;
+    }
+  }
+}
+
 .lite-menus {
   .el-submenu__title:hover, .is-opened .el-submenu__title {
     color: white !important;

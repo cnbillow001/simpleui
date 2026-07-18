@@ -142,7 +142,15 @@
             menuActive: '0',
             breadcrumbs: [],
             language: window.language,
-            pwdDialog: {},
+            pwdDialogVisible: false,
+            pwdLoading: false,
+            pwdForm: {
+                oldPassword: '',
+                newPassword1: '',
+                newPassword2: ''
+            },
+            pwdErrors: {},
+            pwdErrorMessage: '',
             logoutDialogVisible: false,
             logoutLoading: false,
             themeDialogVisible: false,
@@ -312,6 +320,9 @@
 
             this.theme = getCookie('theme');
             this.themeName = getCookie('theme_name');
+            if (!this.theme && this.themeName === 'Default') {
+                this.theme = window.themeUrl + 'default.css';
+            }
 
 
             //接收子页面的事件注册
@@ -694,27 +705,79 @@
             }
             ,
             changePassword: function () {
-                var width = document.documentElement.clientWidth || document.body.clientWidth;
-                if (width > 800) {
-                    this.pwdDialog = {
-                        url: window.urls.changePassword + '?dialog=1',
-                        name: language.change_password,
-                        show: true
-                    };
-                } else {
-                    this.openTab({
-                        url: window.urls.changePassword,
-                        icon: 'far fa-edit',
-                        name: language.change_password,
-                        breadcrumbs: [{
-                            name: language.change_password,
-                            icon: 'far fa-edit'
-                        }]
-                    })
-                    app.breadcrumbs = [language.change_password];
-                }
-            }
-            ,
+                this.pwdForm = {
+                    oldPassword: '',
+                    newPassword1: '',
+                    newPassword2: ''
+                };
+                this.pwdErrors = {};
+                this.pwdErrorMessage = '';
+                this.pwdLoading = false;
+                this.pwdDialogVisible = true;
+            },
+            closePasswordDialog: function () {
+                this.pwdDialogVisible = false;
+                this.pwdErrors = {};
+                this.pwdErrorMessage = '';
+            },
+            applyPasswordErrors: function (errors, message) {
+                var self = this;
+                this.pwdErrors = {};
+                this.pwdErrorMessage = message || '';
+                Object.keys(errors || {}).forEach(function (field) {
+                    self.$set(self.pwdErrors, field, errors[field]);
+                });
+            },
+            submitPasswordChange: function () {
+                var vm = window.app || this;
+                vm.pwdLoading = true;
+                vm.pwdErrors = {};
+                vm.pwdErrorMessage = '';
+                var body = new URLSearchParams();
+                body.append('old_password', vm.pwdForm.oldPassword || '');
+                body.append('new_password1', vm.pwdForm.newPassword1 || '');
+                body.append('new_password2', vm.pwdForm.newPassword2 || '');
+
+                fetch(window.urls.changePasswordApi, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: body.toString(),
+                    credentials: 'same-origin',
+                }).then(function (response) {
+                    return response.text().then(function (text) {
+                        var data = {};
+                        try {
+                            data = text ? JSON.parse(text) : {};
+                        } catch (e) {
+                            data = {
+                                status: 'error',
+                                message: getLanuage('Please correct the error below.'),
+                            };
+                        }
+
+                        if (response.ok && data.status === 'ok') {
+                            vm.pwdDialogVisible = false;
+                            vm.pwdForm = {
+                                oldPassword: '',
+                                newPassword1: '',
+                                newPassword2: ''
+                            };
+                            vm.applyPasswordErrors({}, '');
+                            vm.$message.success(data.message || getLanuage('Password changed successfully.'));
+                            return;
+                        }
+
+                        vm.applyPasswordErrors(data.errors || {}, data.message || getLanuage('Please correct the error below.'));
+                    });
+                }).catch(function () {
+                    vm.applyPasswordErrors({}, getLanuage('Please correct the error below.'));
+                }).finally(function () {
+                    vm.pwdLoading = false;
+                });
+            },
             logout: function () {
                 this.logoutLoading = false;
                 this.logoutDialogVisible = true;
@@ -722,8 +785,10 @@
             confirmLogout: function () {
                 this.logoutLoading = true;
 
-                //清除cookie主题设置和sessionStore数据
-                delete sessionStorage['tabs'];
+                try {
+                    delete sessionStorage['tabs'];
+                } catch (e) {
+                }
                 setCookie('theme', '');
                 setCookie('theme_name', '');
 
@@ -735,8 +800,7 @@
 
                 this.logoutLoading = false;
                 location.replace((window.urls && window.urls.login) || '/admin/login/');
-            }
-            ,
+            },
             goIndex: function (url) {
                 if (!url || url == 'None') {
                     url = '/';

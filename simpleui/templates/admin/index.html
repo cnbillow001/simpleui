@@ -17,7 +17,7 @@
 
     {% block css %}
         {% include 'admin/includes/css-part.html' %}
-        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/index.css' %}?_=4.7">
+        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/index.css' %}?_=5.1">
         <link rel="stylesheet" href="{% static 'admin/simpleui-x/waves/waves.min.css' %}?_=2.1">
     {% endblock %}
     {% block head %}
@@ -239,19 +239,44 @@
                 v-text="item.text"></span>
         </li>
     </ul>
-    <el-dialog title="{% trans 'Change password' %}" :visible.sync="pwdDialog.show" width="520px"
-               custom-class="pwd-dialog" :close-on-click-modal="false">
-        <iframe frameborder="0" :src="pwdDialog.url" width="100%" height="420"></iframe>
+
+    <el-dialog :title="getLanuage('Change password')" :visible.sync="pwdDialogVisible" width="520px"
+               custom-class="account-pwd-dialog" :close-on-click-modal="false" append-to-body>
+        <el-alert v-if="pwdErrorMessage" :title="pwdErrorMessage" type="error" show-icon :closable="false"
+                  class="account-pwd-dialog__alert"></el-alert>
+        <el-form label-width="88px" @submit.native.prevent="submitPasswordChange">
+            <el-form-item required :error="pwdErrors.old_password || ''">
+                <span slot="label" v-text="getLanuage('Old password')"></span>
+                <el-input v-model="pwdForm.oldPassword" type="password" show-password
+                          autocomplete="current-password"></el-input>
+            </el-form-item>
+            <el-form-item required :error="pwdErrors.new_password1 || ''">
+                <span slot="label" v-text="getLanuage('New password')"></span>
+                <el-input v-model="pwdForm.newPassword1" type="password" show-password
+                          autocomplete="new-password"></el-input>
+            </el-form-item>
+            <el-form-item required :error="pwdErrors.new_password2 || ''">
+                <span slot="label" v-text="getLanuage('Confirm password')"></span>
+                <el-input v-model="pwdForm.newPassword2" type="password" show-password
+                          autocomplete="new-password"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="account-dialog__footer">
+            <el-button size="small" @click="closePasswordDialog()" v-text="getLanuage('ConfirmNo')"></el-button>
+            <el-button size="small" type="primary" :loading="pwdLoading" @click="submitPasswordChange"
+                       v-text="getLanuage('ConfirmYes')"></el-button>
+        </span>
     </el-dialog>
 
-    <el-dialog :visible.sync="logoutDialogVisible" width="360px" custom-class="logout-dialog"
-               :show-close="true" :close-on-click-modal="false" append-to-body>
-        <div class="logout-dialog__body">
-            <p class="logout-dialog__desc" v-text="getLanuage('Are you sure you want to log out?')"></p>
+    <el-dialog :title="getLanuage('Tips')" :visible.sync="logoutDialogVisible" width="420px"
+               custom-class="account-pwd-dialog account-pwd-dialog--confirm" :close-on-click-modal="false" append-to-body>
+        <div class="account-confirm-dialog__body">
+            <i class="el-icon-warning account-confirm-dialog__icon" aria-hidden="true"></i>
+            <p class="account-confirm-dialog__text" v-text="getLanuage('Are you sure you want to log out?')"></p>
         </div>
-        <span slot="footer" class="logout-dialog__footer">
+        <span slot="footer" class="account-dialog__footer">
             <el-button size="small" @click="logoutDialogVisible=false" v-text="getLanuage('ConfirmNo')"></el-button>
-            <el-button size="small" type="primary" :loading="logoutLoading" @click="confirmLogout"
+            <el-button size="small" type="primary" :plain="false" :loading="logoutLoading" @click="confirmLogout"
                        v-text="getLanuage('ConfirmYes')"></el-button>
         </span>
     </el-dialog>
@@ -326,6 +351,8 @@
         window.themeUrl = '{% static 'admin/simpleui-x/theme/' %}';
         window.urls = {
             changePassword: "{% url 'admin:password_change' %}",
+            changePasswordApi: "{% url 'admin:simpleui_password_change' %}",
+            logoutConfirm: "{% url 'admin:logout_confirm' %}",
             logout: "{% url 'admin:logout' %}",
             login: "{% url 'admin:login' %}"
         }
@@ -358,7 +385,7 @@
             src="{% static 'admin/simpleui-x/waves/waves.min.js' %}?_={% get_version %}"></script>
     {% block index_js %}
         <script type="text/javascript" src="{% static 'admin/simpleui-x/js/menu.js' %}?_={% get_version %}"></script>
-        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.18f"></script>
+        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.18h"></script>
     {% endblock %}
     {% block autoupdate %}
 

@@ -24,7 +24,10 @@
     <div class="login-card">
         {% block logo %}
             <div class="login-brand">
-                {% if "SIMPLEUI_LOGO"|get_config %}
+                {% if "SIMPLEUI_LOGIN_LOGO"|get_config %}
+                    <img class="login-brand__img{% if "SIMPLEUI_LOGIN_LOGO_SQUARE"|get_config %} login-brand__img--square{% endif %}"
+                         src="{{ "SIMPLEUI_LOGIN_LOGO"|get_config |safe }}" alt="{{ site_header }}">
+                {% elif "SIMPLEUI_LOGO"|get_config %}
                     <img class="login-brand__img" src="{{ "SIMPLEUI_LOGO"|get_config |safe }}" alt="{{ site_header }}">
                 {% else %}
                     <span class="login-brand__icon" aria-hidden="true">
@@ -34,7 +37,9 @@
                         </svg>
                     </span>
                 {% endif %}
-                <h1 class="login-brand__title">{{ site_header }}</h1>
+                {% if "SIMPLEUI_LOGIN_TITLE"|get_config != False %}
+                    <h1 class="login-brand__title">{{ site_header }}</h1>
+                {% endif %}
             </div>
         {% endblock %}
 

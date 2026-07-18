@@ -59,6 +59,7 @@ if not settings.configured:
         USE_TZ=True,
         DEFAULT_AUTO_FIELD="django.db.models.BigAutoField",
         SIMPLEUI_HOME_INFO=False,
+        AUTH_PASSWORD_VALIDATORS=[],
     )
 
 import django

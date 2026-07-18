@@ -53,3 +53,21 @@ msgstr "重新登录"
 
 msgid "seconds to redirect…"
 msgstr "秒后自动跳转…"
+
+msgid "Back to admin"
+msgstr "返回后台"
+
+msgid "Are you sure you want to log out?"
+msgstr "确定注销并退出系统吗？"
+
+msgid "Old password"
+msgstr "原密码"
+
+msgid "New password"
+msgstr "新密码"
+
+msgid "Confirm password"
+msgstr "确认密码"
+
+msgid "Password changed successfully."
+msgstr "密码修改成功"

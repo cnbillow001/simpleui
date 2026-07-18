@@ -3,7 +3,8 @@ var SimpleuiThemes = [
         text: "Default",
         menu: 'rgb(48, 65, 86)',
         logo: 'rgb(48, 65, 86)',
-        top: '#FFF'
+        top: '#FFF',
+        file: "default.css"
     },
     {
         text: "Simpleui-x",

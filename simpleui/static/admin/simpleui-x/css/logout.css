@@ -76,6 +76,53 @@
     font-weight: 600;
 }
 
+.logout-confirm-card {
+    text-align: center;
+}
+
+.logout-confirm__icon {
+    color: #e6a23c;
+    background: rgba(230, 162, 60, 0.12);
+    border-color: rgba(230, 162, 60, 0.22);
+}
+
+.logout-confirm__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 240px;
+    margin-top: 8px;
+}
+
+.logout-confirm__btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.logout-confirm__btn--primary {
+    color: #fff !important;
+    background: linear-gradient(135deg, #409eff 0%, #337ecc 100%);
+}
+
+.logout-confirm__btn--ghost {
+    color: #606266 !important;
+    background: #f5f7fa;
+    border: 1px solid #dcdfe6;
+    box-shadow: none;
+}
+
+.logout-confirm__btn--ghost:hover {
+    color: #303133 !important;
+    background: #eef2f7;
+    box-shadow: none;
+    transform: none;
+}
+
 @keyframes logout-tip-pop {
     from {
         opacity: 0;

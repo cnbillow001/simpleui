@@ -81,9 +81,17 @@ body {
 
 .login-brand__img {
     display: block;
+    margin-inline: auto;
     max-width: 160px;
     max-height: 48px;
     object-fit: contain;
+}
+
+.login-brand__img--square {
+    width: 52px;
+    height: 52px;
+    max-width: 52px;
+    max-height: 52px;
 }
 
 .login-brand__title {
