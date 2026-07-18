@@ -21,6 +21,9 @@ msgstr "退出"
 msgid "Welcome back"
 msgstr "欢迎回来"
 
+msgid "Please log in to continue"
+msgstr "请登录后继续"
+
 msgid "Please complete authentication to enter the system"
 msgstr "请完成身份验证后进入系统"
 

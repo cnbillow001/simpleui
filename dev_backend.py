@@ -69,6 +69,10 @@ from django.contrib import admin
 from django.core.management import execute_from_command_line
 from django.urls import path
 
+admin.site.site_header = "企业运营管理中心"
+admin.site.site_title = "企业管理后台"
+admin.site.index_title = "业务管理"
+
 urlpatterns = [path("admin/", admin.site.urls)]
 
 

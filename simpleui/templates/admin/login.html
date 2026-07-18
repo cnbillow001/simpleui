@@ -1,141 +1,98 @@
 <!DOCTYPE html>
 {% load i18n static simpletags %}
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
-<!--
-   The project use: django-simpleui
-   source code：
-   https://github.com/newpanjing/simpleui
--->
-<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<html lang="{{ LANGUAGE_CODE|default:'zh-hans' }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    {% block title %}
-        <title>{{ site_title }}-{% trans 'Log in' %}</title>
-    {% endblock %}
-    {% block icon %}
-{#        <link rel="icon" href="{% static 'admin/simpleui-x/img/favicon.png' %}">#}
-    {% endblock %}
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fa">
+    {% block title %}<title>{{ site_title }} - {% trans 'Log in' %}</title>{% endblock %}
+    {% block icon %}{% endblock %}
     {% include 'admin/includes/css-part.html' %}
-
     {% block css %}
-        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/login.css' %}?_=4.2">
+        <link rel="stylesheet" href="{% static 'admin/simpleui-x/css/login.css' %}?_=6.0">
     {% endblock %}
     {% block bg %}{% endblock %}
-
-    {% block head %}
-        {# You can add code here. #}
-    {% endblock %}
+    {% block head %}{% endblock %}
 </head>
 <body class="login-page">
 {% block left %}{% endblock %}
 {% block main %}
-<div class="login-layout">
-    <aside class="login-brand" style="background-image: url('{% static 'admin/simpleui-x/img/login/bg.svg' %}')">
-        {% block logo %}{% endblock %}
-
-        <div class="login-brand__hero">
-            <div class="login-brand__main">
-                <span class="login-brand__tag">
-                    <span class="login-brand__tag-dot"></span>
-                    Enterprise Ready
-                </span>
+<main class="login-shell">
+    <div class="login-card">
+        {% block logo %}
+            <div class="login-brand">
+                {% if "SIMPLEUI_LOGO"|get_config %}
+                    <img class="login-brand__img" src="{{ "SIMPLEUI_LOGO"|get_config |safe }}" alt="{{ site_header }}">
+                {% else %}
+                    <span class="login-brand__icon" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" role="img">
+                            <path d="M16 3.5 27 9.8v12.4L16 28.5 5 22.2V9.8L16 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="m10.5 16 3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>
+                        </svg>
+                    </span>
+                {% endif %}
                 <h1 class="login-brand__title">{{ site_header }}</h1>
-                <p class="login-brand__desc">
-                    {% trans 'A unified admin console for daily operations, data management and access control.' %}
-                </p>
             </div>
-            <div class="login-brand__features">
-                <div class="login-brand__feature">
-                    <span class="login-brand__feature-mark"><i class="fas fa-shield-alt"></i></span>
-                    <span class="login-brand__feature-text">{% trans 'Access Control' %}</span>
-                </div>
-                <div class="login-brand__feature">
-                    <span class="login-brand__feature-mark"><i class="fas fa-sliders-h"></i></span>
-                    <span class="login-brand__feature-text">{% trans 'Easy Operations' %}</span>
-                </div>
-                <div class="login-brand__feature">
-                    <span class="login-brand__feature-mark"><i class="fas fa-database"></i></span>
-                    <span class="login-brand__feature-text">{% trans 'Data Management' %}</span>
-                </div>
-            </div>
-        </div>
-    </aside>
+        {% endblock %}
 
-    <section class="login-card">
-        <div class="login-card__inner">
-            <div class="login-main">
-                {% block header %}
-                    <h2 class="login-card__title">{% trans 'Welcome back' %}</h2>
-                    <p class="login-card__desc">{% trans 'Please complete authentication to enter the system' %}</p>
-                {% endblock %}
+        {% block header %}
+            <p class="login-subtitle">{% trans 'Please log in to continue' %}</p>
+        {% endblock %}
 
-                {% block errors %}
+        <div class="login-main">
+            {% block errors %}
+                <div class="login-errors" role="alert" aria-live="polite">
                     {% if form.non_field_errors %}
                         {% for error in form.non_field_errors %}
                             <el-alert title="{{ error }}" type="error" show-icon :closable="false"></el-alert>
                         {% endfor %}
+                    {% elif form.errors %}
+                        <el-alert title="{% trans 'Please correct the error below.' %}" type="error" show-icon :closable="false"></el-alert>
                     {% endif %}
-                    {% if form.errors and not form.non_field_errors %}
-                        <p class="errornote">
-                            {% if form.errors.items|length == 1 %}
-                                <el-alert title="{% trans "Please correct the error below." %}" type="error" show-icon :closable="false"></el-alert>
-                            {% else %}
-                                <el-alert title="{% trans "Please correct the errors below." %}" type="error" show-icon :closable="false"></el-alert>
-                            {% endif %}
-                        </p>
-                    {% endif %}
-                {% endblock %}
+                </div>
+            {% endblock %}
 
-                {% block form %}
-                    <form class="simpleui-form" action="{{ app_path }}" method="post" id="login-form">
-                        {% csrf_token %}
-                        <div class="simpleui-input-inline">
-                            <el-input prefix-icon="fas fa-user" v-model="username" name="username"
-                                      placeholder="{% trans 'username' %}" autofocus size="medium"></el-input>
+            {% block form %}
+                <form class="simpleui-form" action="{{ app_path }}" method="post" id="login-form" @submit.prevent="login">
+                    {% csrf_token %}
+                    <div class="simpleui-input-inline">
+                        <el-input prefix-icon="fas fa-user" v-model="username" name="username"
+                                  placeholder="{% trans 'username' %}" autocomplete="username"
+                                  autofocus size="medium"></el-input>
+                    </div>
+                    <div class="simpleui-input-inline">
+                        <el-input prefix-icon="fas fa-lock" type="password" v-model="password" name="password"
+                                  placeholder="{% trans 'password' %}" autocomplete="current-password"
+                                  show-password size="medium"></el-input>
+                    </div>
+                    {% url 'admin_password_reset' as password_reset_url %}
+                    {% if password_reset_url %}
+                        <div class="password-reset-link">
+                            <a class="forgot-password" href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
                         </div>
-                        <div class="simpleui-input-inline">
-                            <el-input prefix-icon="fas fa-lock" type="password" v-model="password" name="password"
-                                      @keyup.enter.native="login()"
-                                      placeholder="{% trans 'password' %}" show-password size="medium"></el-input>
-                        </div>
-                        {% url 'admin_password_reset' as password_reset_url %}
-                        {% if password_reset_url %}
-                            <div class="password-reset-link">
-                                <a class="forgot-password" href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
-                            </div>
-                        {% endif %}
-                        <div class="simpleui-input-inline login-btn">
-                            <el-button :icon="loading?'el-icon-loading':''" @click="login()"
-                                       type="primary">{% trans 'Log in' %}</el-button>
-                        </div>
-                        <input type="hidden" name="next" value="{{ next }}"/>
-                    </form>
-                {% endblock %}
-            </div>
+                    {% endif %}
+                    <div class="simpleui-input-inline login-btn">
+                        <el-button native-type="submit" :loading="loading" type="primary">{% trans 'Log in' %}</el-button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            {% endblock %}
         </div>
-        <div class="login-footer">
-            Copyright © {% now "Y" %} {{ site_header }}
-        </div>
-    </section>
-</div>
+    </div>
+
+    <footer class="login-footer">
+        © {% now "Y" %} {{ site_header }}
+    </footer>
+</main>
 {% endblock %}
 
 {% include 'admin/includes/js-part.html' %}
-<script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2026.07.18"></script>
-<script type="text/javascript"
-        src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_=2026.07.18"
-        onerror=""></script>
-{% block login_js %}
-<script type="text/javascript" src="{% static 'admin/simpleui-x/js/login.js' %}?_=4.0"></script>
-{% endblock %}
-
-{% block particles %}
-    {# Split login layout: particles disabled for visual clarity #}
-{% endblock %}
-
+<script src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2026.07.18"></script>
+<script src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_=2026.07.18" onerror=""></script>
+{% block login_js %}<script src="{% static 'admin/simpleui-x/js/login.js' %}?_=6.0"></script>{% endblock %}
+{% block particles %}{% endblock %}
 </body>
 </html>

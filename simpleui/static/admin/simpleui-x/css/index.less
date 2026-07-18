@@ -77,22 +77,61 @@ html, body {
 }
 
 .logo-wrap {
-  margin: 0;
+  display: flex;
   flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  min-width: 200px;
+  height: 60px;
+  margin: 0;
+  padding: 0 16px;
   color: #fff;
   font-weight: 600;
-  line-height: 58px;
-  font-size: 14px;
-  font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-  vertical-align: middle;
-  padding: 0px 5px;
-  min-width: 200px;
-
+  font-size: 15px;
+  font-family: "Plus Jakarta Sans", "Segoe UI", Avenir, Helvetica Neue, Arial, sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
+.logo-wrap__img,
 .logo-wrap img {
-  max-width: 30px;
-  margin-bottom: -10px;
+  display: block;
+  flex: 0 0 auto;
+  width: 28px;
+  max-width: 28px;
+  height: 28px;
+  margin: 0;
+  object-fit: contain;
+}
+
+.logo-wrap__title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logo-wrap .logo-icon {
+  display: inline-flex;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+
+  svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
 }
 
 #home {

@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="0;url={% url 'admin:login' %}">
     <title>{% trans 'Log in' %}</title>
+    <style>
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            background: #f8fafc;
+        }
+    </style>
     <script>
         location.replace("{% url 'admin:login' %}");
     </script>

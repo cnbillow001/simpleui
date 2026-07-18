@@ -575,9 +575,31 @@
                     setCookie('theme', '');
                     setCookie('theme_name', '');
 
-                    //创建一个form post方式提交
-                    document.querySelector("#logout_form").submit();
-                    // window.location.href = window.urls.logout;
+                    var form = document.querySelector("#logout_form");
+                    var loginUrl = (window.urls && window.urls.login) || '/admin/login/';
+                    var goLogin = function () {
+                        location.replace(loginUrl);
+                    };
+
+                    // Prefer fetch so the blank logged_out page never paints.
+                    if (window.fetch && form) {
+                        var data = new FormData(form);
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: data,
+                            credentials: 'same-origin',
+                            redirect: 'manual'
+                        }).then(goLogin).catch(function () {
+                            form.submit();
+                        });
+                        return;
+                    }
+
+                    if (form) {
+                        form.submit();
+                    } else {
+                        goLogin();
+                    }
                 }).catch(function () {
 
                 });
