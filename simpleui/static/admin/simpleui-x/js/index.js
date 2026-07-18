@@ -565,9 +565,9 @@
             }
             ,
             logout: function () {
-                this.$confirm(language.confirm, Lanuages.Tips, {
-                    confirmButtonText: language.yes,
-                    cancelButtonText: language.no,
+                this.$confirm(getLanuage('Are you sure you want to log out?'), getLanuage('Tips'), {
+                    confirmButtonText: getLanuage('ConfirmYes'),
+                    cancelButtonText: getLanuage('ConfirmNo'),
                     type: 'warning'
                 }).then(function () {
                     //清除cookie主题设置和sessionStore数据

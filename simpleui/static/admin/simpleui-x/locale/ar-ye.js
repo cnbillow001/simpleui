@@ -30,6 +30,8 @@ var Lanuages = {
     "ConfirmYes": "نعم",
     "ConfirmNo": "رفض",
     "Tips": "دلائل",
+    "Log out": "تسجيل الخروج",
+    "Are you sure you want to log out?": "هل انت متاكد من تسجيل الخروج؟",
     "Are you sure you want them all closed": "هل انت متاكد هل تريد الاغلاق ؟",
 
     "to": "الى",

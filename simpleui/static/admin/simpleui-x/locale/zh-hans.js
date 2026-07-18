@@ -30,6 +30,8 @@ var Lanuages = {
     "ConfirmYes": "确定",
     "ConfirmNo": "取消",
     "Tips": "提示",
+    "Log out": "退出",
+    "Are you sure you want to log out?": "确定要退出吗？",
     "Are you sure you want them all closed": "你确定要全部关闭吗？",
 
     "to": "至",

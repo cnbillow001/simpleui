@@ -30,6 +30,8 @@ var Lanuages = {
     "ConfirmYes": "Да",
     "ConfirmNo": "Нет",
     "Tips": "Подсказки",
+    "Log out": "Выйти",
+    "Are you sure you want to log out?": "Вы действительно хотите выйти?",
     "Are you sure you want them all closed": "Вы действительно хотите закрыть все вкладки?",
 
     "to": "в",

@@ -167,9 +167,11 @@
                                     {% endif %}
 
                                     {% verbatim mycode %}
-                                        <el-dropdown-item icon="el-icon-close"
+                                        <el-dropdown-item icon="fas fa-sign-out-alt"
                                                           @click.native="logout()"
-                                                          divided>{{ language.logout }}</el-dropdown-item>
+                                                          divided>
+                                            <span v-text="getLanuage('Log out')"></span>
+                                        </el-dropdown-item>
                                     {% endverbatim mycode %}
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -328,9 +330,9 @@
             src="{% static 'admin/simpleui-x/automatic/dicts.js' %}?_={% get_version %}"></script>
     <script type="text/javascript"
             src="{% static 'admin/simpleui-x/automatic/segment.js' %}?_={% get_version %}"></script>
-    <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/en-us.js' %}?_=2026.07.18"></script>
     <script type="text/javascript"
-            src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_={% get_version %}"
+            src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js?_=2026.07.18"
             onerror="localeError()"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
@@ -338,7 +340,7 @@
             src="{% static 'admin/simpleui-x/waves/waves.min.js' %}?_={% get_version %}"></script>
     {% block index_js %}
         <script type="text/javascript" src="{% static 'admin/simpleui-x/js/menu.js' %}?_={% get_version %}"></script>
-        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_={% get_version %}"></script>
+        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.18"></script>
     {% endblock %}
     {% block autoupdate %}
 

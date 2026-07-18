@@ -14,3 +14,27 @@ msgstr ""
 
 msgid "Back"
 msgstr "返回"
+
+msgid "Log out"
+msgstr "退出"
+
+msgid "Welcome back"
+msgstr "欢迎回来"
+
+msgid "Please complete authentication to enter the system"
+msgstr "请完成身份验证后进入系统"
+
+msgid "Enterprise management system"
+msgstr "企业级管理系统"
+
+msgid "A unified admin console for daily operations, data management and access control."
+msgstr "统一的后台管理入口，支持日常运维、数据管理与权限控制。"
+
+msgid "Access Control"
+msgstr "权限控制"
+
+msgid "Easy Operations"
+msgstr "便捷运维"
+
+msgid "Data Management"
+msgstr "数据管理"
