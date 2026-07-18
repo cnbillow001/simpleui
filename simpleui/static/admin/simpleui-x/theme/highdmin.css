@@ -179,3 +179,35 @@ a:visited {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 /*# sourceMappingURL=highdmin.css.map */
+
+/* simpleui-collapsed-popup-theme */
+.el-menu--vertical:not(.el-menu) > .el-menu--popup {
+    background: #e0e0e0 !important;
+    border-color: rgba(88, 107, 125, 0.12) !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item {
+    color: #586b7d !important;
+    background: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item:hover,
+.el-menu--vertical:not(.el-menu) .el-menu-item:focus {
+    color: #213a53 !important;
+    background: #e0e0e0 !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
+    color: #02c0ce !important;
+    background: rgba(2, 192, 206, 0.16) !important;
+    box-shadow: inset 3px 0 0 #02c0ce;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title {
+    color: #586b7d !important;
+    background-color: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title i {
+    color: inherit !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title:hover {
+    color: #586b7d !important;
+    background-color: #ededed !important;
+}
+/* /simpleui-collapsed-popup-theme */

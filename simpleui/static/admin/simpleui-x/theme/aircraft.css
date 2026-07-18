@@ -191,3 +191,35 @@ a:visited {
   background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #efeff0), color-stop(1, #ffffff));
 }
 /*# sourceMappingURL=aircraft.css.map */
+
+/* simpleui-collapsed-popup-theme */
+.el-menu--vertical:not(.el-menu) > .el-menu--popup {
+    background: #e0e0e0 !important;
+    border-color: rgba(88, 107, 125, 0.12) !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item {
+    color: #586b7d !important;
+    background: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item:hover,
+.el-menu--vertical:not(.el-menu) .el-menu-item:focus {
+    color: #213a53 !important;
+    background: #d2d2dd !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
+    color: #414959 !important;
+    background: rgba(65, 73, 89, 0.16) !important;
+    box-shadow: inset 3px 0 0 #414959;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title {
+    color: #444 !important;
+    background-color: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title i {
+    color: inherit !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title:hover {
+    color: #444 !important;
+    background-color: #ededed !important;
+}
+/* /simpleui-collapsed-popup-theme */

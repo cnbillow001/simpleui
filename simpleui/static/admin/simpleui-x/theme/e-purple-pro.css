@@ -180,3 +180,35 @@ a:visited {
   border-left: #8263b1 3px solid !important;
 }
 /*# sourceMappingURL=e-purple-pro.css.map */
+
+/* simpleui-collapsed-popup-theme */
+.el-menu--vertical:not(.el-menu) > .el-menu--popup {
+    background: #283846 !important;
+    border-color: rgba(167, 177, 194, 0.12) !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item {
+    color: #a7b1c2 !important;
+    background: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item:hover,
+.el-menu--vertical:not(.el-menu) .el-menu-item:focus {
+    color: #FFF !important;
+    background: #3b5769 !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
+    color: #8263b1 !important;
+    background: rgba(130, 99, 177, 0.16) !important;
+    box-shadow: inset 3px 0 0 #8263b1;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title {
+    color: #FFF !important;
+    background-color: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title i {
+    color: inherit !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title:hover {
+    color: #FFF !important;
+    background-color: #212c3a !important;
+}
+/* /simpleui-collapsed-popup-theme */

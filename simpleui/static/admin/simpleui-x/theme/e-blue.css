@@ -215,3 +215,35 @@ a:visited {
 }
 
 /*# sourceMappingURL=e-blue.css.map */
+
+/* simpleui-collapsed-popup-theme */
+.el-menu--vertical:not(.el-menu) > .el-menu--popup {
+    background: #ffffff !important;
+    border-color: rgba(72, 72, 72, 0.12) !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item {
+    color: #484848 !important;
+    background: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item:hover,
+.el-menu--vertical:not(.el-menu) .el-menu-item:focus {
+    color: #484848 !important;
+    background: #e8e8e8 !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
+    color: #3ba1df !important;
+    background: rgba(59, 161, 223, 0.16) !important;
+    box-shadow: inset 3px 0 0 #3ba1df;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title {
+    color: #484848 !important;
+    background-color: transparent !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title i {
+    color: inherit !important;
+}
+.el-menu--vertical:not(.el-menu) .el-submenu__title:hover {
+    color: #666 !important;
+    background-color: #f2f3f7 !important;
+}
+/* /simpleui-collapsed-popup-theme */

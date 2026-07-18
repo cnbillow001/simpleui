@@ -163,6 +163,44 @@ a:link, a:visited {
   }
 }
 
+/* Collapsed sidebar flyout menus are appended outside .menu */
+.el-menu--vertical:not(.el-menu) {
+  > .el-menu--popup {
+    background: @menu-background !important;
+    border-color: fade(@menu-color, 12%) !important;
+  }
+
+  .el-menu-item {
+    color: @menu-color !important;
+    background: transparent !important;
+
+    &:hover, &:focus {
+      color: @menu-color-hover !important;
+      background: @menu-background-hover !important;
+    }
+
+    &.is-active {
+      color: @primary !important;
+      background: fade(@primary, 16%) !important;
+      box-shadow: inset 3px 0 0 @primary;
+    }
+  }
+
+  .el-submenu__title {
+    color: @menu-title-color !important;
+    background-color: transparent !important;
+
+    i {
+      color: inherit !important;
+    }
+
+    &:hover {
+      color: @menu-title-color-hover !important;
+      background-color: @menu-title-background-color-hover !important;
+    }
+  }
+}
+
 .quick-card a:hover {
   color: rgba(@primary, 0.8);
 }
