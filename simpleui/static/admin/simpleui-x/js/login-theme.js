@@ -225,7 +225,10 @@
                 if (url.pathname.indexOf('brand-logo') === -1) {
                     continue;
                 }
-                url.searchParams.set('variant', 'login');
+                var variant = url.searchParams.get('variant') || 'login';
+                if (variant !== 'login') {
+                    continue;
+                }
                 url.searchParams.set('color', primary);
                 // bust cache so color change is visible immediately
                 url.searchParams.set('_', String(Date.now()));
@@ -234,6 +237,8 @@
             }
         }
     }
+
+    window.applyBrandLogoTheme = applyLoginTheme;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', applyLoginTheme);

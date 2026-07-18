@@ -34,7 +34,7 @@
                                         :key="c.eid || (group.name + '-' + j)"
                                         class="quick-wrap">
                                     <a class="quick-link" href="javascript:;" @click="openTab(c, c.eid)">
-                                        <span class="icon" :class="c.icon"></span>
+                                        <span class="icon" :class="[c.icon, quickIconTone(group.name, c, j)]"></span>
                                         <span class="card-name" v-text="c.name"></span>
                                     </a>
                                 </div>

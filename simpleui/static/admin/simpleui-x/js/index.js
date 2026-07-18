@@ -381,6 +381,19 @@
 
                 return groups;
             },
+            hashString: function (value) {
+                var hash = 0;
+                var text = String(value || '');
+                for (var i = 0; i < text.length; i++) {
+                    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+                    hash |= 0;
+                }
+                return Math.abs(hash);
+            },
+            quickIconTone: function (groupName, item, index) {
+                var seed = String(groupName || '') + '|' + String((item && (item.eid || item.name)) || index);
+                return 'icon--tone-' + ((this.hashString(seed) % 4) + 1);
+            },
             handlerMenus(menus) {
                 let self = this;
                 menus.forEach(item => {
