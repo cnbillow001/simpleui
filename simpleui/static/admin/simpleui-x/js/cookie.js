@@ -97,3 +97,49 @@ function getThemePreference() {
     }
     return {theme: theme, themeName: themeName};
 }
+
+var SIMPLEUI_FONT_SIZE_KEY = 'simpleui_font_size';
+var DEFAULT_FONT_SLIDER = 14;
+
+function setFontPreference(size) {
+    var parsed = parseInt(size, 10);
+    if (isNaN(parsed) || parsed <= 0) {
+        parsed = 0;
+    }
+    try {
+        if (parsed > 0) {
+            localStorage.setItem(SIMPLEUI_FONT_SIZE_KEY, String(parsed));
+        } else {
+            localStorage.removeItem(SIMPLEUI_FONT_SIZE_KEY);
+        }
+    } catch (e) {
+    }
+    setCookie('fontSize', parsed);
+}
+
+function getFontPreference() {
+    var size = null;
+    try {
+        size = localStorage.getItem(SIMPLEUI_FONT_SIZE_KEY);
+    } catch (e) {
+    }
+    if (size === null || size === '') {
+        size = getCookie('fontSize');
+    }
+    if (size === null || size === '') {
+        return 0;
+    }
+    var parsed = parseInt(size, 10);
+    if (isNaN(parsed) || parsed <= 0) {
+        return 0;
+    }
+    return parsed;
+}
+
+function getFontSliderValue(size) {
+    var parsed = parseInt(size, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+        return parsed;
+    }
+    return DEFAULT_FONT_SLIDER;
+}

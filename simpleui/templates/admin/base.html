@@ -57,7 +57,9 @@
             fontSize: null
         },
         watch: {
-            fontSize: function (newValue) {
+            fontSize: {
+                immediate: true,
+                handler: function (newValue) {
                 if (newValue != 0) {
                     var fontStyle = document.getElementById('fontStyle');
                     if (!fontStyle) {
@@ -74,15 +76,11 @@
                         fontStyle.remove();
                     }
                 }
+                }
             }
         },
         created: function () {
-            var val = getCookie('fontSize');
-            if (val) {
-                this.fontSize = parseInt(val);
-            } else {
-                this.fontSize = 0;
-            }
+            this.fontSize = (typeof getFontPreference === 'function') ? getFontPreference() : 0;
         },
         methods: {}
     });

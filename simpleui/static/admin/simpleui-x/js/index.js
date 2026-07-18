@@ -64,15 +64,12 @@
             fontSize: null
         },
         created: function () {
-            var val = getCookie('fontSize');
-            if (val) {
-                this.fontSize = parseInt(val);
-            } else {
-                this.fontSize = 0;
-            }
+            this.fontSize = getFontPreference();
         },
         watch: {
-            fontSize: function (newValue) {
+            fontSize: {
+                immediate: true,
+                handler: function (newValue) {
                 if (newValue != 0) {
                     var fontStyle = document.getElementById('fontStyle');
                     if (!fontStyle) {
@@ -88,6 +85,7 @@
                     if (fontStyle) {
                         fontStyle.remove();
                     }
+                }
                 }
             }
         },
@@ -223,7 +221,8 @@
             // 首页快捷操作，按菜单组分组
             quickGroups: [],
             fontDialogVisible: false,
-            fontSlider: 12,
+            fontSlider: DEFAULT_FONT_SLIDER,
+            fontPersistReady: false,
             loading: false,
             menuTextShow: true,
             menuData: []
@@ -282,6 +281,8 @@
             }
             window.app = this;
 
+            var savedFontSize = getFontPreference();
+            this.fontSlider = getFontSliderValue(savedFontSize);
 
             menus = this.handlerMenus(menus);
 
@@ -419,10 +420,10 @@
                 }
             },
             reset: function () {
-                this.fontSlider = 14;
+                this.fontSlider = DEFAULT_FONT_SLIDER;
                 fontConfig.fontSize = 0;
 
-                setCookie('fontSize', 0);
+                setFontPreference(0);
 
                 this.fontDialogVisible = false;
                 fontEvents.forEach(handler => {
@@ -430,15 +431,30 @@
                 });
             },
             fontClick: function () {
-                this.fontSlider = fontConfig.fontSize;
-                this.fontDialogVisible = !this.fontDialogVisible;
+                var opening = !this.fontDialogVisible;
+                this.fontDialogVisible = opening;
+                if (opening) {
+                    this.fontSlider = getFontSliderValue(fontConfig.fontSize);
+                    this.fontPersistReady = false;
+                    var self = this;
+                    this.$nextTick(function () {
+                        self.fontPersistReady = true;
+                    });
+                }
             },
             fontSlideChange: function (value) {
-                fontConfig.fontSize = value;
-                //写入cookie
-                setCookie('fontSize', value);
+                if (!this.fontDialogVisible || !this.fontPersistReady) {
+                    return;
+                }
+                var size = parseInt(value, 10);
+                if (isNaN(size) || size < 12) {
+                    size = 12;
+                }
+                this.fontSlider = size;
+                fontConfig.fontSize = size;
+                setFontPreference(size);
                 fontEvents.forEach(handler => {
-                    handler(value);
+                    handler(size);
                 });
 
             },
