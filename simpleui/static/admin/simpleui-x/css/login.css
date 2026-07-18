@@ -164,13 +164,18 @@ body {
     box-shadow: 0 0 0 3px rgba(var(--login-primary-rgb), 0.12);
 }
 
-.simpleui-form .el-input__prefix,
-.simpleui-form .el-input__suffix {
-    color: #a8abb2;
-}
-
 .simpleui-form .el-input__prefix {
     left: 12px;
+    color: rgba(var(--login-primary-rgb), 0.46);
+    transition: color 0.18s ease;
+}
+
+.simpleui-form .el-input:focus-within .el-input__prefix {
+    color: var(--login-primary);
+}
+
+.simpleui-form .el-input__suffix {
+    color: #a8abb2;
 }
 
 .simpleui-form .el-input--prefix .el-input__inner {
