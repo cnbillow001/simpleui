@@ -69,12 +69,23 @@ django.setup()
 from django.contrib import admin
 from django.core.management import execute_from_command_line
 from django.urls import path
+from django.views.generic import RedirectView
 
 admin.site.site_header = "企业运营管理中心"
 admin.site.site_title = "企业管理后台"
 admin.site.index_title = "业务管理"
 
-urlpatterns = [path("admin/", admin.site.urls)]
+urlpatterns = [
+    path(
+        "favicon.ico",
+        RedirectView.as_view(
+            url="/static/admin/simpleui-x/img/favicon.svg",
+            permanent=False,
+        ),
+        name="favicon",
+    ),
+    path("admin/", admin.site.urls),
+]
 
 
 if __name__ == "__main__":
