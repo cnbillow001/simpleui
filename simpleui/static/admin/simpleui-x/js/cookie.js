@@ -100,12 +100,25 @@ function getThemePreference() {
 
 var SIMPLEUI_FONT_SIZE_KEY = 'simpleui_font_size';
 var DEFAULT_FONT_SLIDER = 14;
+var FONT_SIZE_MIN = 10;
+var FONT_SIZE_MAX = 30;
 
-function setFontPreference(size) {
+function clampFontSize(size) {
     var parsed = parseInt(size, 10);
     if (isNaN(parsed) || parsed <= 0) {
-        parsed = 0;
+        return 0;
     }
+    if (parsed < FONT_SIZE_MIN) {
+        return FONT_SIZE_MIN;
+    }
+    if (parsed > FONT_SIZE_MAX) {
+        return FONT_SIZE_MAX;
+    }
+    return parsed;
+}
+
+function setFontPreference(size) {
+    var parsed = clampFontSize(size);
     try {
         if (parsed > 0) {
             localStorage.setItem(SIMPLEUI_FONT_SIZE_KEY, String(parsed));
@@ -129,16 +142,12 @@ function getFontPreference() {
     if (size === null || size === '') {
         return 0;
     }
-    var parsed = parseInt(size, 10);
-    if (isNaN(parsed) || parsed <= 0) {
-        return 0;
-    }
-    return parsed;
+    return clampFontSize(size);
 }
 
 function getFontSliderValue(size) {
-    var parsed = parseInt(size, 10);
-    if (!isNaN(parsed) && parsed > 0) {
+    var parsed = clampFontSize(size);
+    if (parsed > 0) {
         return parsed;
     }
     return DEFAULT_FONT_SLIDER;

@@ -301,7 +301,7 @@
                 :title="getLanuage('Set font size')"
                 :visible.sync="fontDialogVisible"
                 :width="small?'90%':'50%'">
-            <el-slider v-model="fontSlider" :min="12" :max="100" show-input @change="fontSlideChange"></el-slider>
+            <el-slider v-model="fontSlider" :min="10" :max="30" show-input @change="fontSlideChange"></el-slider>
             <div style="text-align: right;padding-top: 20px">
                 <el-button type="primary" @click="reset()" v-text="getLanuage('Reset')"></el-button>
             </div>

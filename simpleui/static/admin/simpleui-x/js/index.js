@@ -446,9 +446,14 @@
                 if (!this.fontDialogVisible || !this.fontPersistReady) {
                     return;
                 }
-                var size = parseInt(value, 10);
-                if (isNaN(size) || size < 12) {
-                    size = 12;
+                var size = (typeof clampFontSize === 'function')
+                    ? clampFontSize(value)
+                    : parseInt(value, 10);
+                if (!size || size < 10) {
+                    size = 10;
+                }
+                if (size > 30) {
+                    size = 30;
                 }
                 this.fontSlider = size;
                 fontConfig.fontSize = size;
