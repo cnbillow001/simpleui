@@ -3,7 +3,7 @@
  * Supports solid colors and extracts accents from gradient themes (e.g. Orange).
  */
 (function () {
-    var DEFAULT_COLOR = '#3c8dbc';
+    var DEFAULT_COLOR = '#409eff';
 
     function clampByte(n) {
         return Math.max(0, Math.min(255, Math.round(n)));
@@ -131,13 +131,16 @@
         if (!item) {
             return null;
         }
-        // Prefer top bar color (what users see as "theme"), then logo, then menu.
-        var candidates = [item.top, item.logo, item.menu];
+        // Prefer theme accent (primary), then visible top bar / logo colors; skip white sidebar bg.
+        var candidates = [item.primary, item.top, item.logo, item.menu];
         for (var i = 0; i < candidates.length; i++) {
             var color = normalizeColor(candidates[i]);
             if (color) {
                 return color;
             }
+        }
+        if (typeof readThemePrimaryFromStylesheet === 'function') {
+            return normalizeColor(readThemePrimaryFromStylesheet(null, item && item.text));
         }
         return null;
     }

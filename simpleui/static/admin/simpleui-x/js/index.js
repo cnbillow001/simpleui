@@ -68,6 +68,20 @@
         return [];
     }
 
+    function withThemeCacheBust(url) {
+        if (!url) {
+            return url;
+        }
+        var ver = window.__simpleui_version;
+        if (ver == null || ver === '') {
+            ver = typeof __simpleui_version !== 'undefined' ? __simpleui_version : '';
+        }
+        if (ver == null || ver === '') {
+            return url;
+        }
+        return String(url).split('?')[0] + '?_=' + ver;
+    }
+
     window.callback = function () {
         window.location.reload()
     }
@@ -306,16 +320,16 @@
             var themePref = (typeof getThemePreference === 'function')
                 ? getThemePreference()
                 : {theme: getCookie('theme'), themeName: getCookie('theme_name')};
-            this.theme = themePref.theme || '';
+            this.theme = withThemeCacheBust(themePref.theme || '');
             this.themeName = themePref.themeName || '';
             if (!this.theme && this.themeName) {
                 var named = (window.SimpleuiThemes || []).find(function (t) {
                     return t.text === themePref.themeName;
                 });
                 if (named && named.file) {
-                    this.theme = window.themeUrl + named.file;
+                    this.theme = withThemeCacheBust(window.themeUrl + named.file);
                 } else if (this.themeName === 'Default') {
-                    this.theme = window.themeUrl + 'default.css';
+                    this.theme = withThemeCacheBust(window.themeUrl + 'default.css');
                 }
             }
 
@@ -493,13 +507,14 @@
             setTheme: function (item) {
                 var url = window.themeUrl;
                 if (item.file && item.file != '') {
-                    this.theme = url + item.file;
+                    this.theme = withThemeCacheBust(url + item.file);
                 } else {
                     this.theme = '';
                 }
                 this.themeName = item.text;
                 if (typeof setThemePreference === 'function') {
-                    setThemePreference(this.theme, item.text);
+                    // Persist path without cache-bust query so cookies stay stable.
+                    setThemePreference(item.file ? (url + item.file) : '', item.text);
                 } else {
                     setCookie('theme', this.theme);
                     setCookie('theme_name', item.text);

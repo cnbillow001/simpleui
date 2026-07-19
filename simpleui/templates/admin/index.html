@@ -57,7 +57,7 @@
 
         {% if "SIMPLEUI_DEFAULT_THEME"|get_config %}
             <link v-else rel="stylesheet"
-                  href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}?_=popup5">
+                  href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}?_={% get_version %}">
         {% endif %}
     {% endblock %}
     <!-- mobile -->
@@ -344,6 +344,7 @@
             confirm: '{% trans 'Are you sure?' %}'
         }
         window.themeUrl = '{% static 'admin/simpleui-x/theme/' %}';
+        window.__simpleui_version = '{% get_version %}';
         window.urls = {
             changePassword: "{% url 'admin:password_change' %}",
             changePasswordApi: "{% url 'admin:simpleui_password_change' %}",
@@ -380,7 +381,7 @@
             src="{% static 'admin/simpleui-x/waves/waves.min.js' %}?_={% get_version %}"></script>
     {% block index_js %}
         <script type="text/javascript" src="{% static 'admin/simpleui-x/js/menu.js' %}?_={% get_version %}"></script>
-        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_=2026.07.19e"></script>
+        <script type="text/javascript" src="{% static 'admin/simpleui-x/js/index.js' %}?_={% get_version %}"></script>
     {% endblock %}
     {% block autoupdate %}
 
