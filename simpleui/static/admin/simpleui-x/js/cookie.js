@@ -152,3 +152,172 @@ function getFontSliderValue(size) {
     }
     return DEFAULT_FONT_SLIDER;
 }
+
+function normalizeSimpleuiThemeColor(value) {
+    if (!value) {
+        return null;
+    }
+    var raw = String(value).trim().replace(/\s*!important\s*/ig, '');
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(raw)) {
+        return raw.length === 4
+            ? ('#' + raw[1] + raw[1] + raw[2] + raw[2] + raw[3] + raw[3]).toLowerCase()
+            : raw.toLowerCase();
+    }
+    var rgb = raw.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+    if (rgb) {
+        return '#' + [rgb[1], rgb[2], rgb[3]].map(function (part) {
+            var hex = parseInt(part, 10).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
+    return null;
+}
+
+function pickSimpleuiThemeColor(item) {
+    if (!item) {
+        return null;
+    }
+    var candidates = [item.top, item.logo, item.menu];
+    for (var i = 0; i < candidates.length; i++) {
+        var color = normalizeSimpleuiThemeColor(candidates[i]);
+        if (!color) {
+            continue;
+        }
+        var rgb = color.replace('#', '');
+        var r = parseInt(rgb.slice(0, 2), 16);
+        var g = parseInt(rgb.slice(2, 4), 16);
+        var b = parseInt(rgb.slice(4, 6), 16);
+        if (r > 240 && g > 240 && b > 240) {
+            continue;
+        }
+        return color;
+    }
+    return null;
+}
+
+function resolveSimpleuiThemeItem(themeUrl, themeName) {
+    var themes = (window.parent && window.parent.SimpleuiThemes) || window.SimpleuiThemes || [];
+    var file = '';
+    if (themeUrl) {
+        file = String(themeUrl).split('?')[0].split('/').pop();
+    }
+    var item = null;
+    if (themeName) {
+        for (var i = 0; i < themes.length; i++) {
+            if (themes[i].text === themeName) {
+                item = themes[i];
+                break;
+            }
+        }
+    }
+    if (!item && file) {
+        for (var j = 0; j < themes.length; j++) {
+            if (themes[j].file === file) {
+                item = themes[j];
+                break;
+            }
+        }
+    }
+    return item;
+}
+
+function readThemePrimaryFromDom() {
+    var docs = [document];
+    try {
+        if (window.parent && window.parent.document && window.parent.document !== document) {
+            docs.push(window.parent.document);
+        }
+    } catch (e) {
+    }
+    for (var i = 0; i < docs.length; i++) {
+        var btn = docs[i].querySelector('.el-button--primary');
+        if (!btn) {
+            continue;
+        }
+        var color = normalizeSimpleuiThemeColor(window.getComputedStyle(btn).backgroundColor);
+        if (color) {
+            return color;
+        }
+    }
+    return null;
+}
+
+function readThemePrimaryFromCssVar() {
+    var value = window.getComputedStyle(document.documentElement).getPropertyValue('--su-input-accent');
+    return normalizeSimpleuiThemeColor(value);
+}
+
+function simpleuiHexToRgbParts(hex) {
+    var normalized = normalizeSimpleuiThemeColor(hex);
+    if (!normalized) {
+        return null;
+    }
+    var parts = normalized.replace('#', '');
+    return {
+        r: parseInt(parts.slice(0, 2), 16),
+        g: parseInt(parts.slice(2, 4), 16),
+        b: parseInt(parts.slice(4, 6), 16)
+    };
+}
+
+function simpleuiRgbPartsToHex(r, g, b) {
+    return '#' + [r, g, b].map(function (part) {
+        var hex = Math.max(0, Math.min(255, Math.round(part))).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+}
+
+function darkenSimpleuiColor(hex, ratio) {
+    var rgb = simpleuiHexToRgbParts(hex);
+    if (!rgb) {
+        return hex;
+    }
+    var factor = 1 - (ratio || 0.12);
+    return simpleuiRgbPartsToHex(rgb.r * factor, rgb.g * factor, rgb.b * factor);
+}
+
+function applyDjangoAdminThemeVars(primary) {
+    var root = document.documentElement;
+    var hover = darkenSimpleuiColor(primary, 0.12);
+    var rgb = simpleuiHexToRgbParts(primary);
+    root.style.setProperty('--primary', primary);
+    root.style.setProperty('--secondary', primary);
+    root.style.setProperty('--accent', primary);
+    root.style.setProperty('--link-fg', primary);
+    root.style.setProperty('--link-hover-color', hover);
+    root.style.setProperty('--default-button-bg', primary);
+    root.style.setProperty('--button-bg', primary);
+    root.style.setProperty('--button-hover-bg', hover);
+    root.style.setProperty('--default-button-hover-bg', hover);
+    if (rgb) {
+        root.style.setProperty('--selected-row', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.16)');
+    }
+}
+
+function applyFormThemeVars(themeUrl, themeName) {
+    var item = resolveSimpleuiThemeItem(themeUrl, themeName);
+    var primary = pickSimpleuiThemeColor(item)
+        || readThemePrimaryFromCssVar()
+        || readThemePrimaryFromDom()
+        || '#409eff';
+    var root = document.documentElement;
+    root.style.setProperty('--su-input-focus-border', primary);
+    root.style.setProperty('--su-input-accent', primary);
+    var rgb = simpleuiHexToRgbParts(primary);
+    if (rgb) {
+        root.style.setProperty('--su-input-focus-ring', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.12)');
+    }
+    applyDjangoAdminThemeVars(primary);
+    if (typeof window.syncSimpleuiSelectorAccent === 'function') {
+        window.syncSimpleuiSelectorAccent();
+    }
+}
+
+function scheduleApplyFormThemeVars(themeUrl, themeName) {
+    var delays = [0, 80, 200, 500, 1000];
+    for (var i = 0; i < delays.length; i++) {
+        window.setTimeout(function () {
+            applyFormThemeVars(themeUrl, themeName);
+        }, delays[i]);
+    }
+}

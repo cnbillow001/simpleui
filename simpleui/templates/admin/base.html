@@ -7,7 +7,9 @@
     {% include 'admin/includes/css-part.html' %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}?_=2.7">
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=3.1">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=4.13">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/vendor/select2/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/autocomplete.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/theme/simpleui.css' %}">
 
 
@@ -18,6 +20,9 @@
     <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js"></script>
 
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript">
+        window.themeUrl = '{% static 'admin/simpleui-x/theme/' %}';
+    </script>
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
     <link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static 'admin/css/rtl.css' %}{% endblock %}?_=20180905"/>{% endif %}
@@ -33,6 +38,10 @@
     <meta name="robots" content="NONE,NOARCHIVE"/>
     {% endblock %}
     <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/vendor/select2/select2.full.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/js/form-select.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/js/selector-theme.js' %}?_={% get_version %}"></script>
 </head>
 {% load i18n %}
 
@@ -43,14 +52,15 @@
 {% endverbatim dynamicCss %}
 
 <div id="theme">
-    <link v-if="theme && theme!=''" rel="stylesheet" :href="theme">
+    <link v-if="theme && theme!=''" rel="stylesheet" :href="theme" @load="syncFormThemeVars">
 
     {% if "SIMPLEUI_DEFAULT_THEME"|get_config %}
     <link v-else rel="stylesheet"
           href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}">
     {% endif %}
 </div>
-<script type="text/javascript">
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript">
 
     var fontConfig = new Vue({
         data: {
@@ -90,12 +100,35 @@
         el: '#theme',
         data: {
             theme: '',
+            themeName: '',
+        },
+        watch: {
+            theme: function (value) {
+                var self = this;
+                this.$nextTick(function () {
+                    if (typeof scheduleApplyFormThemeVars === 'function') {
+                        scheduleApplyFormThemeVars(value, self.themeName);
+                    } else if (typeof applyFormThemeVars === 'function') {
+                        applyFormThemeVars(value, self.themeName);
+                    }
+                });
+            }
+        },
+        methods: {
+            syncFormThemeVars: function () {
+                if (typeof scheduleApplyFormThemeVars === 'function') {
+                    scheduleApplyFormThemeVars(this.theme, this.themeName);
+                } else if (typeof applyFormThemeVars === 'function') {
+                    applyFormThemeVars(this.theme, this.themeName);
+                }
+            }
         },
         created: function () {
             var themePref = (typeof getThemePreference === 'function')
                 ? getThemePreference()
                 : {theme: getCookie('theme'), themeName: getCookie('theme_name')};
             this.theme = themePref.theme || '';
+            this.themeName = themePref.themeName || '';
             if (!this.theme && themePref.themeName && window.themeUrl) {
                 var named = (window.SimpleuiThemes || []).find(function (t) {
                     return t.text === themePref.themeName;
@@ -105,11 +138,18 @@
                 }
             }
 
+            this.syncFormThemeVars();
+
             var self = this;
             //向父组件注册事件
             if (parent.addEvent) {
                 parent.addEvent('theme', function (theme) {
                     self.theme = theme;
+                    var pref = (typeof getThemePreference === 'function')
+                        ? getThemePreference()
+                        : {themeName: getCookie('theme_name')};
+                    self.themeName = (pref && pref.themeName) || self.themeName;
+                    self.syncFormThemeVars();
                 });
 
                 parent.addEvent('font', function (font) {

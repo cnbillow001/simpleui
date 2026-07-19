@@ -4,6 +4,64 @@
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 {{ media }}
+<script type="text/javascript" src="{% static 'admin/simpleui-x/js/calendar-position.js' %}?_={% get_version %}"></script>
+<script type="text/javascript">
+(function () {
+    var select2Url = '{% static "admin/js/vendor/select2/select2.full.js" %}';
+
+    function cleanupSelect2Globals() {
+        if (window.django && window.django.jQuery && window.jQuery === window.django.jQuery) {
+            window.jQuery = undefined;
+            window.$ = undefined;
+        }
+    }
+
+    function syncInlineFormTheme() {
+        if (typeof window.initSimpleuiSelects === 'function') {
+            window.initSimpleuiSelects();
+        }
+        if (typeof scheduleApplyFormThemeVars === 'function') {
+            var pref = (typeof getThemePreference === 'function')
+                ? getThemePreference()
+                : {theme: null, themeName: null};
+            scheduleApplyFormThemeVars(pref.theme, pref.themeName);
+        } else if (typeof applyFormThemeVars === 'function') {
+            var fallbackPref = (typeof getThemePreference === 'function')
+                ? getThemePreference()
+                : {theme: null, themeName: null};
+            applyFormThemeVars(fallbackPref.theme, fallbackPref.themeName);
+        }
+    }
+
+    function scheduleSync() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', syncInlineFormTheme);
+        } else {
+            syncInlineFormTheme();
+        }
+        window.addEventListener('load', syncInlineFormTheme);
+    }
+
+    function ensureSelect2ThenSync() {
+        var $ = window.django && window.django.jQuery;
+        if ($ && !$.fn.select2) {
+            window.jQuery = $;
+            window.$ = $;
+            var script = document.createElement('script');
+            script.src = select2Url;
+            script.onload = function () {
+                cleanupSelect2Globals();
+                scheduleSync();
+            };
+            document.head.appendChild(script);
+            return;
+        }
+        scheduleSync();
+    }
+
+    ensureSelect2ThenSync();
+})();
+</script>
 
 {% endblock %}
 {% block extrastyle %}{{ block.super }}
