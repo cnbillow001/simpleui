@@ -1,6 +1,6 @@
 @import "base";
 
-@primary: #409eff !important;
+@primary: #409eff;
 @color: white;
 
 @menu-color: #bfcbd9 !important;
@@ -25,19 +25,17 @@
 
 .menu {
   .el-menu-item-group,
-  .el-menu-item {
-    background-color: #1f2d3d !important;
+  .el-menu-item:not(.is-active) {
+    background-color: @menu-background !important;
   }
 
   .el-submenu__title {
-    background-color: #304156 !important;
+    background-color: @menu-title-background-color !important;
   }
 
-  .el-menu .is-active {
-    color: #409eff !important;
+  .el-menu .el-menu-item.is-active {
+    color: @menu-color-hover !important;
+    background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
   }
-}
-
-.is-active .el-submenu__title {
-  color: #409eff !important;
 }

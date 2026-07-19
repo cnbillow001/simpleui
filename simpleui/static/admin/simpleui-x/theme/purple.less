@@ -1,18 +1,18 @@
 @import "base";
 
-@primary: #5458b3 !important;
+@primary: #5458b3;
 @color: white;
 
-@menu-color: #9ca1b9 !important;
+@menu-color: rgba(255, 255, 255, 0.78) !important;
 @menu-background: #3e4295 !important;
 
 @menu-color-hover: #FFF;
-@menu-background-hover: #4a5aa7;
+@menu-background-hover: #001528;
 
-@menu-title-color: #FFF;
+@menu-title-color: @menu-color;
 @menu-title-background-color: #3e4295;
 
-@menu-title-color-hover: #FFF;
+@menu-title-color-hover: @menu-color-hover;
 @menu-title-background-color-hover: rgba(@menu-title-background-color, 0.8);
 
 
@@ -32,16 +32,9 @@
 }
 
 .menu {
-  .el-menu .is-active {
+  .el-menu .el-menu-item.is-active {
     color: #fff !important;
     background-color: @menu-background-hover !important;
-  }
-
-  ul div {
-    border-top: 1px solid #5757b9;
-  }
-
-  ul div:last-child {
-    border-bottom: 1px solid #5757b9;
+    border-left: 3px solid @primary;
   }
 }

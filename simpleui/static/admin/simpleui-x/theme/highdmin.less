@@ -1,13 +1,13 @@
 @import "base";
 
-@primary: #02c0ce !important;
+@primary: #02c0ce;
 @color: white;
 
 @menu-color: #586b7d !important;
 @menu-background: #e0e0e0 !important;
 
 @menu-color-hover: #213a53;
-@menu-background-hover: #e0e0e0;
+@menu-background-hover: #cfd6de;
 
 @menu-title-color: #586b7d;
 @menu-title-background-color: #ededed;
@@ -23,8 +23,10 @@
   background-color: @navbar-background;
 }
 
-.menu .el-menu .is-active {
+.menu .el-menu .el-menu-item.is-active {
   color: @menu-color-hover !important;
+  background-color: @menu-background-hover !important;
+  border-left: 3px solid @primary;
 }
 
 .navbar .el-button:focus, .navbar .el-button:hover {

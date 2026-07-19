@@ -1,18 +1,18 @@
 @import "base";
 
-@primary: #009688 !important;
+@primary: #009688;
 @color: white;
 
-@menu-color: #484848;
+@menu-color: rgba(255, 255, 255, 0.72);
 @menu-background: #393D49 !important;
 
 @menu-color-hover: #fff;
-@menu-background-hover: #009688;
+@menu-background-hover: #001528;
 
-@menu-title-color: #fff !important;
+@menu-title-color: @menu-color;
 @menu-title-background-color: #393D49;
 
-@menu-title-color-hover: #fff;
+@menu-title-color-hover: @menu-color-hover;
 @menu-title-background-color-hover: #4E5465;
 
 
@@ -25,8 +25,9 @@
 }
 
 .menu {
-  .el-menu .is-active {
+  .el-menu .el-menu-item.is-active {
     color: #FFF !important;
     background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
   }
 }

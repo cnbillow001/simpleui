@@ -509,6 +509,7 @@
                     '--su-menu-hover-color',
                     '--su-menu-active',
                     '--su-menu-active-bg',
+                    '--su-menu-active-color',
                     '--su-menu-title-hover-bg',
                     '--su-menu-border'
                 ];
@@ -550,6 +551,10 @@
                     return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000 > 170;
                 }
 
+                function readRootVar(name) {
+                    return getComputedStyle(root).getPropertyValue(name).trim();
+                }
+
                 function applyPalette(bg, color) {
                     if (bg) {
                         root.style.setProperty('--su-menu-bg', bg);
@@ -575,14 +580,19 @@
                         return;
                     }
                     var bg = getComputedStyle(menu).backgroundColor;
-                    var textEl = menu.querySelector('.el-submenu__title') || menu.querySelector('.el-menu-item');
-                    var color = textEl ? getComputedStyle(textEl).color : '';
                     if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
-                        applyPalette(bg, color);
+                        applyPalette(bg, null);
                     }
-                    var activeEl = menu.querySelector('.el-menu .is-active') || menu.querySelector('.is-active');
+                    var activeEl = menu.querySelector('.el-menu-item.is-active') || menu.querySelector('.el-menu .is-active');
                     if (activeEl) {
-                        root.style.setProperty('--su-menu-active', getComputedStyle(activeEl).color);
+                        var activeStyle = getComputedStyle(activeEl);
+                        var accent = activeStyle.borderLeftColor;
+                        if (!accent || accent === 'rgba(0, 0, 0, 0)' || accent === 'transparent') {
+                            accent = activeStyle.color;
+                        }
+                        if (accent && accent !== 'rgba(0, 0, 0, 0)') {
+                            root.style.setProperty('--su-menu-active', accent);
+                        }
                     }
                 }
 

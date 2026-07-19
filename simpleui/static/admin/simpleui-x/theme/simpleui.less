@@ -1,21 +1,21 @@
 @import "base";
 
 /*主题色*/
-@primary: #409eff !important;
+@primary: #409eff;
 @color: white;
 
 /*菜单文本*/
-@menu-color: #FFF !important;
+@menu-color: rgba(255, 255, 255, 0.72);
 
 /*菜单背景*/
 @menu-background: #2c2e39 !important;
 @menu-color-hover: #FFF;
-@menu-background-hover: #447eff;
+@menu-background-hover: #001528;
 
-@menu-title-color: #fff;
+@menu-title-color: @menu-color;
 @menu-title-background-color: #202028;
 
-@menu-title-color-hover: #fff;
+@menu-title-color-hover: @menu-color-hover;
 @menu-title-background-color-hover: #35353e;
 
 
@@ -23,8 +23,9 @@
 @navbar-background: #fff;
 
 .menu {
-  .el-menu .is-active {
+  .el-menu .el-menu-item.is-active {
     color: #FFF !important;
     background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
   }
 }

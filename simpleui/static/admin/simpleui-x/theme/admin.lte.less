@@ -1,6 +1,6 @@
 @import "base";
 
-@primary: #2096c8 !important;
+@primary: #2096c8;
 @color: white;
 
 @menu-color: #8aa4af !important;
@@ -13,7 +13,7 @@
 @menu-title-background-color: @menu-background;
 
 @menu-title-color-hover: @menu-color-hover;
-@menu-title-background-color-hover: @menu-title-background-color-hover;
+@menu-title-background-color-hover: @menu-background-hover;
 
 
 @navbar-color: #fff;
@@ -24,8 +24,10 @@
   background-color: @navbar-background !important;
 }
 
-.menu .el-menu .is-active {
+.menu .el-menu .el-menu-item.is-active {
   color: #FFF !important;
+  background-color: @menu-background-hover !important;
+  border-left: 3px solid @primary;
 }
 
 .navbar {

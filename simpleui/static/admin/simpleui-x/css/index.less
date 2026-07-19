@@ -41,35 +41,57 @@ html, body {
   }
 }
 
-.menu .el-menu .is-active {
-  color: rgb(64, 158, 255) !important;
-}
-
 .menu, .menu .el-menu-item-group {
-  color: rgb(191, 203, 217);
-  background-color: rgb(48, 65, 86);
+  color: var(--su-menu-color, #bfcbd9);
+  background-color: var(--su-menu-bg, rgb(48, 65, 86));
+  font-size: 14px;
 }
 
-.menu .el-menu-item:hover {
-  background-color: #001528 !important;
+.menu .el-menu {
+  background-color: transparent !important;
+  font-size: inherit;
 }
 
-.is-active .el-submenu__title {
-  color: rgb(64, 158, 255) !important;
+.menu .el-menu.el-menu--inline {
+  background-color: transparent !important;
 }
 
-.menu .el-menu-item {
-  color: rgb(191, 203, 217) !important;
-  background-color: #1f2d3d !important;
+.menu .el-menu-item,
+.menu .el-menu .el-menu-item,
+.menu .el-submenu__title {
+  font-size: 14px !important;
+}
+
+.menu .el-menu-item:not(.is-active),
+.menu .el-menu .el-menu-item:not(.is-active) {
+  color: var(--su-menu-color, #bfcbd9) !important;
+  background-color: transparent !important;
 }
 
 .menu .el-submenu__title {
-  color: rgb(191, 203, 217) !important;
-  background-color: rgb(48, 65, 86);
+  color: var(--su-menu-color, #bfcbd9) !important;
+  background-color: transparent;
 }
 
-.menu .el-submenu__title:hover, .is-opened .el-submenu__title {
-  background-color: #263445 !important;
+/* Fig 1: active leaf = white text + dark bg + primary left bar */
+.menu .el-menu-item.is-active,
+.menu .el-menu .el-menu-item.is-active {
+  color: var(--su-menu-active-color, var(--su-menu-hover-color, #fff)) !important;
+  background-color: var(--su-menu-active-bg, #001528) !important;
+  border-left: 3px solid var(--su-menu-active, #409eff) !important;
+  box-sizing: border-box;
+}
+
+.menu .el-menu-item:hover:not(.is-active),
+.menu .el-menu .el-menu-item:hover:not(.is-active) {
+  color: var(--su-menu-hover-color, #fff) !important;
+  background-color: var(--su-menu-hover-bg, rgba(0, 0, 0, 0.35)) !important;
+}
+
+.menu .el-submenu__title:hover,
+.menu .is-opened .el-submenu__title {
+  color: var(--su-menu-hover-color, #fff) !important;
+  background-color: var(--su-menu-title-hover-bg, #263445) !important;
 }
 
 .menu .el-menu-item-group__title {
@@ -636,6 +658,14 @@ html, body {
   .el-icon-arrow-right {
     display: none;
   }
+
+  .el-submenu,
+  .el-menu-item,
+  ul div,
+  .el-submenu__title {
+    border-top: none !important;
+    border-bottom: none !important;
+  }
 }
 
 .menu-scroll {
@@ -707,8 +737,9 @@ html, body {
     }
 
     &.is-active {
-      color: var(--su-menu-active) !important;
-      background: var(--su-menu-hover-bg) !important;
+      color: var(--su-menu-active-color, var(--su-menu-hover-color, #fff)) !important;
+      background: var(--su-menu-active-bg, #001528) !important;
+      border-left: 3px solid var(--su-menu-active, #409eff);
       box-shadow: none !important;
     }
   }
@@ -931,6 +962,6 @@ html, body {
 
 .lite-menus {
   .el-submenu__title:hover, .is-opened .el-submenu__title {
-    color: white !important;
+    color: var(--su-menu-hover-color, #fff) !important;
   }
 }

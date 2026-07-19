@@ -1,13 +1,13 @@
 @import "base";
 
-@primary: #414959 !important;
+@primary: #414959;
 @color: white;
 
 @menu-color: #586b7d !important;
 @menu-background: #e0e0e0 !important;
 
 @menu-color-hover: #213a53;
-@menu-background-hover: #d2d2dd;
+@menu-background-hover: #c5ccd4;
 
 @menu-title-color: #444;
 @menu-title-background-color: #ededed;
@@ -27,17 +27,10 @@
 }
 
 .menu {
-  .el-menu li .is-active {
-    color: @menu-color;
-    border-left: #898aa4 3px solid;
-  }
-
-  .el-submenu__title, .el-submenu.is-active .el-submenu__title {
-    border-top: 1px solid #fcfcfc;
-    border-bottom: 1px solid #c8c8cb;
-    background: #efeff0;
-    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #efeff0), color-stop(1, #fafafa));
-    font-size: 1em;
+  .el-menu .el-menu-item.is-active {
+    color: @menu-color-hover !important;
+    background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
   }
 
   .el-submenu__title:hover {

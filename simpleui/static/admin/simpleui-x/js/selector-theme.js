@@ -2,6 +2,15 @@
 
 (function () {
     function readAccentColor() {
+        if (typeof resolveThemePrimary === 'function') {
+            var pref = (typeof getThemePreference === 'function')
+                ? getThemePreference()
+                : {theme: null, themeName: null};
+            var resolved = resolveThemePrimary(pref.theme, pref.themeName);
+            if (resolved) {
+                return resolved;
+            }
+        }
         var value = window.getComputedStyle(document.documentElement).getPropertyValue('--su-input-accent');
         value = value && value.trim();
         return value || '#409eff';

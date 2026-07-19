@@ -7,10 +7,9 @@
     {% include 'admin/includes/css-part.html' %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}?_=2.7">
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=4.13">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=4.16">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/vendor/select2/select2.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/autocomplete.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/theme/simpleui.css' %}">
 
 
     {% include 'admin/includes/js-part.html' %}
@@ -20,8 +19,19 @@
     <script type="text/javascript" src="{% static 'admin/simpleui-x/locale/' %}{% get_language %}.js"></script>
 
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/cookie.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
     <script type="text/javascript">
         window.themeUrl = '{% static 'admin/simpleui-x/theme/' %}';
+        (function () {
+            if (typeof scheduleApplyFormThemeVars === 'function') {
+                var pref = (typeof getThemePreference === 'function')
+                    ? getThemePreference()
+                    : {theme: null, themeName: null};
+                scheduleApplyFormThemeVars(pref.theme, pref.themeName);
+            } else if (typeof applyFormThemeVars === 'function') {
+                applyFormThemeVars(null, null);
+            }
+        })();
     </script>
     {% block extrastyle %}{% endblock %}
     {% if LANGUAGE_BIDI %}
@@ -59,7 +69,6 @@
           href="{% static 'admin/simpleui-x/theme/' %}{{ "SIMPLEUI_DEFAULT_THEME"|get_config }}">
     {% endif %}
 </div>
-    <script type="text/javascript" src="{% static 'admin/simpleui-x/theme/theme.js' %}?_={% get_version %}"></script>
     <script type="text/javascript">
 
     var fontConfig = new Vue({

@@ -247,22 +247,46 @@ a:link, a:visited {
   color: @menu-color;
 }
 
+/* Expanded submenu panel; themes may override. */
+@menu-submenu-background: @menu-background-hover;
+
 .menu {
   background-color: @menu-background;
+  font-size: 14px;
+
+  .el-menu {
+    background-color: transparent !important;
+    color: @menu-color;
+    font-size: inherit;
+  }
+
+  .el-menu.el-menu--inline {
+    background-color: transparent !important;
+  }
 
   .el-menu-item {
     color: @menu-color;
+    font-size: 14px;
+  }
+
+  .el-menu .el-menu-item:not(.is-active) {
+    color: @menu-color !important;
   }
 
   .el-menu-item:hover {
     color: @menu-color-hover;
   }
 
-  .el-menu .is-active {
-    color: @primary;
+  .el-menu-item.is-active,
+  .el-menu .el-menu-item.is-active,
+  .el-menu .is-active.el-menu-item {
+    color: @menu-color-hover !important;
+    background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
+    box-sizing: border-box;
   }
 
-  .el-menu-item-group, .el-menu-item {
+  .el-menu-item-group, .el-menu-item:not(.is-active) {
     background-color: @menu-background;
   }
 
@@ -282,17 +306,50 @@ a:link, a:visited {
   }
 
   .el-submenu__title i {
-    color: @menu-title-color !important;
+    color: inherit !important;
   }
 
   .el-submenu__title {
-    color: @menu-title-color !important;
+    color: @menu-color !important;
+    background-color: @menu-title-background-color !important;
+    font-size: 14px;
+  }
+
+  .el-submenu__title:hover {
+    color: @menu-color-hover !important;
+    background-color: @menu-title-background-color-hover !important;
+  }
+
+  /* Keep parent row distinct from expanded children (Figure-1 style). */
+  .el-submenu.is-opened > .el-submenu__title {
+    color: @menu-color !important;
     background-color: @menu-title-background-color !important;
   }
 
-  .el-submenu__title:hover, .is-opened .el-submenu__title {
-    color: @menu-title-color-hover !important;
+  .el-submenu.is-opened > .el-submenu__title:hover {
+    color: @menu-color-hover !important;
     background-color: @menu-title-background-color-hover !important;
+  }
+
+  .el-submenu.is-opened > .el-menu.el-menu--inline {
+    background-color: @menu-submenu-background !important;
+  }
+
+  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:not(.is-active) {
+    background-color: transparent !important;
+  }
+
+  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:hover,
+  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item.is-active {
+    background-color: @menu-background-hover !important;
+  }
+
+  .el-submenu,
+  .el-menu-item,
+  ul div,
+  .el-submenu__title {
+    border-top: none !important;
+    border-bottom: none !important;
   }
 }
 
@@ -303,7 +360,8 @@ a:link, a:visited {
   --su-menu-hover-bg: @menu-background-hover;
   --su-menu-hover-color: @menu-color-hover;
   --su-menu-active: @primary;
-  --su-menu-active-bg: fade(@primary, 16%);
+  --su-menu-active-bg: @menu-background-hover !important;
+  --su-menu-active-color: @menu-color-hover !important;
   --su-menu-title-hover-bg: @menu-title-background-color-hover;
   --su-menu-border: fade(@menu-color, 12%);
   --su-input-border: #dcdfe6;
@@ -331,22 +389,23 @@ a:link, a:visited {
     }
 
     &.is-active {
-      color: @primary !important;
-      background: fade(@primary, 16%) !important;
-      box-shadow: inset 3px 0 0 @primary;
+      color: @menu-color-hover !important;
+      background: @menu-background-hover !important;
+      border-left: 3px solid @primary;
+      box-shadow: none !important;
     }
   }
 
   .el-submenu__title {
-    color: @menu-title-color !important;
+    color: @menu-color !important;
     background-color: transparent !important;
 
     i {
       color: inherit !important;
     }
 
-    &:hover {
-      color: @menu-title-color-hover !important;
+    &:hover, &:focus {
+      color: @menu-color-hover !important;
       background-color: @menu-title-background-color-hover !important;
     }
   }

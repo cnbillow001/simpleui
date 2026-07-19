@@ -71,6 +71,10 @@
             $el.select2(buildSelect2Options($, $el));
             $el.data('simpleuiSelect2', true);
         });
+
+        if (typeof window.syncSimpleuiSelectorAccent === 'function') {
+            window.syncSimpleuiSelectorAccent();
+        }
     }
 
     function scheduleInit(root) {

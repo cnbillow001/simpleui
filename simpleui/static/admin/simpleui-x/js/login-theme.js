@@ -217,6 +217,14 @@
             meta.setAttribute('content', primary);
         }
 
+        if (typeof applyFormThemeVars === 'function') {
+            applyFormThemeVars(null, item && item.text);
+        } else {
+            root.style.setProperty('--su-input-focus-border', primary, 'important');
+            root.style.setProperty('--su-input-accent', primary, 'important');
+            root.style.setProperty('--su-input-focus-ring', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.12)', 'important');
+        }
+
         var logos = document.querySelectorAll('img.login-brand__img, img[src*="brand-logo.svg"]');
         for (var i = 0; i < logos.length; i++) {
             var img = logos[i];

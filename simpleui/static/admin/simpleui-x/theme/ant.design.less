@@ -1,7 +1,7 @@
 @import "base";
 
 /*主题色*/
-@primary: #409eff !important;
+@primary: #409eff;
 @color: white;
 
 
@@ -10,13 +10,16 @@
 @menu-background: #000b16 !important;
 
 @menu-color-hover: #FFF;
-@menu-background-hover: #1890ff;
+@menu-background-hover: #001528;
 
 @menu-title-color: hsla(0, 0%, 100%, .65);
 @menu-title-background-color: #001528;
 
 @menu-title-color-hover: #fff;
 @menu-title-background-color-hover: @menu-title-background-color;
+
+/* Parent title and menu hover share #001528; darken expanded children. */
+@menu-submenu-background: rgba(0, 0, 0, 0.22);
 
 
 @navbar-color: rgba(0, 0, 0, 0.65);
@@ -33,11 +36,9 @@
     color: white !important;
   }
 
-  .el-menu .is-active {
-
+  .el-menu .el-menu-item.is-active {
     color: #FFF !important;
     background-color: @menu-background-hover !important;
+    border-left: 3px solid @primary;
   }
-
-
 }

@@ -173,6 +173,67 @@ function normalizeSimpleuiThemeColor(value) {
     return null;
 }
 
+function readThemePrimaryFromItem(item) {
+    if (!item || !item.primary) {
+        return null;
+    }
+    return normalizeSimpleuiThemeColor(item.primary);
+}
+
+function readThemePrimaryFromStylesheet(themeUrl, themeName) {
+    var file = '';
+    if (themeUrl) {
+        file = String(themeUrl).split('?')[0].split('/').pop();
+    }
+    if (!file) {
+        var item = resolveSimpleuiThemeItem(themeUrl, themeName);
+        if (item && item.file) {
+            file = item.file;
+        }
+    }
+    if (!file) {
+        return null;
+    }
+
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        var sheet = document.styleSheets[i];
+        try {
+            var href = sheet.href || '';
+            if (href.indexOf(file) === -1) {
+                continue;
+            }
+            var rules = sheet.cssRules || sheet.rules;
+            if (!rules) {
+                continue;
+            }
+            for (var j = 0; j < rules.length; j++) {
+                var rule = rules[j];
+                if (!rule.style || rule.selectorText !== ':root') {
+                    continue;
+                }
+                var accent = rule.style.getPropertyValue('--su-input-accent')
+                    || rule.style.getPropertyValue('--su-input-focus-border');
+                var color = normalizeSimpleuiThemeColor(accent);
+                if (color) {
+                    return color;
+                }
+            }
+        } catch (e) {
+        }
+    }
+    return null;
+}
+
+function resolveThemePrimary(themeUrl, themeName) {
+    var item = resolveSimpleuiThemeItem(themeUrl, themeName);
+    return readThemePrimaryFromStylesheet(themeUrl, themeName)
+        || readThemePrimaryFromItem(item)
+        || readThemePrimaryFromCssVar()
+        || readThemePrimaryFromDom()
+        || pickSimpleuiThemeColor(item)
+        || '#409eff';
+}
+
 function pickSimpleuiThemeColor(item) {
     if (!item) {
         return null;
@@ -276,45 +337,64 @@ function darkenSimpleuiColor(hex, ratio) {
     return simpleuiRgbPartsToHex(rgb.r * factor, rgb.g * factor, rgb.b * factor);
 }
 
+function setRootCssVar(root, name, value, important) {
+    if (important) {
+        root.style.setProperty(name, value, 'important');
+    } else {
+        root.style.setProperty(name, value);
+    }
+}
+
 function applyDjangoAdminThemeVars(primary) {
     var root = document.documentElement;
     var hover = darkenSimpleuiColor(primary, 0.12);
     var rgb = simpleuiHexToRgbParts(primary);
-    root.style.setProperty('--primary', primary);
-    root.style.setProperty('--secondary', primary);
-    root.style.setProperty('--accent', primary);
-    root.style.setProperty('--link-fg', primary);
-    root.style.setProperty('--link-hover-color', hover);
-    root.style.setProperty('--default-button-bg', primary);
-    root.style.setProperty('--button-bg', primary);
-    root.style.setProperty('--button-hover-bg', hover);
-    root.style.setProperty('--default-button-hover-bg', hover);
+    setRootCssVar(root, '--primary', primary, true);
+    setRootCssVar(root, '--primary-fg', '#ffffff', true);
+    setRootCssVar(root, '--secondary', primary, true);
+    setRootCssVar(root, '--accent', primary, true);
+    setRootCssVar(root, '--link-fg', primary, true);
+    setRootCssVar(root, '--link-hover-color', hover, true);
+    setRootCssVar(root, '--default-button-bg', primary, true);
+    setRootCssVar(root, '--button-bg', primary, true);
+    setRootCssVar(root, '--button-hover-bg', hover, true);
+    setRootCssVar(root, '--default-button-hover-bg', hover, true);
+    setRootCssVar(root, '--header-bg', primary, true);
+    setRootCssVar(root, '--button-fg', '#ffffff', true);
+    setRootCssVar(root, '--close-button-bg', '#ffffff', true);
     if (rgb) {
-        root.style.setProperty('--selected-row', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.16)');
+        var selectedBg = 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.16)';
+        setRootCssVar(root, '--selected-row', selectedBg, true);
+        setRootCssVar(root, '--selected-bg', selectedBg, true);
+        setRootCssVar(root, '--close-button-hover-bg', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.08)', true);
     }
 }
 
 function applyFormThemeVars(themeUrl, themeName) {
-    var item = resolveSimpleuiThemeItem(themeUrl, themeName);
-    var primary = pickSimpleuiThemeColor(item)
-        || readThemePrimaryFromCssVar()
-        || readThemePrimaryFromDom()
-        || '#409eff';
+    var primary = resolveThemePrimary(themeUrl, themeName);
     var root = document.documentElement;
-    root.style.setProperty('--su-input-focus-border', primary);
-    root.style.setProperty('--su-input-accent', primary);
+    setRootCssVar(root, '--su-input-focus-border', primary, true);
+    setRootCssVar(root, '--su-input-accent', primary, true);
     var rgb = simpleuiHexToRgbParts(primary);
     if (rgb) {
-        root.style.setProperty('--su-input-focus-ring', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.12)');
+        setRootCssVar(root, '--su-input-focus-ring', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.12)', true);
     }
     applyDjangoAdminThemeVars(primary);
+    setRootCssVar(root, '--el-color-primary', primary, true);
+    setRootCssVar(root, '--login-primary', primary, true);
+    setRootCssVar(root, '--pwd-primary', primary, true);
+    if (rgb) {
+        setRootCssVar(root, '--login-primary-rgb', rgb.r + ', ' + rgb.g + ', ' + rgb.b, true);
+        setRootCssVar(root, '--pwd-primary-hover', darkenSimpleuiColor(primary, 0.12), true);
+    }
     if (typeof window.syncSimpleuiSelectorAccent === 'function') {
         window.syncSimpleuiSelectorAccent();
     }
 }
 
 function scheduleApplyFormThemeVars(themeUrl, themeName) {
-    var delays = [0, 80, 200, 500, 1000];
+    applyFormThemeVars(themeUrl, themeName);
+    var delays = [80, 200, 500, 1000];
     for (var i = 0; i < delays.length; i++) {
         window.setTimeout(function () {
             applyFormThemeVars(themeUrl, themeName);
