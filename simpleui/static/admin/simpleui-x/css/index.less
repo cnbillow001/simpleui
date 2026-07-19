@@ -73,11 +73,11 @@ html, body {
   background-color: transparent;
 }
 
-/* Fig 1: active leaf = white text + dark bg + primary left bar */
+/* Active leaf: soft wash + primary left bar (same when collapsed popup) */
 .menu .el-menu-item.is-active,
 .menu .el-menu .el-menu-item.is-active {
   color: var(--su-menu-active-color, var(--su-menu-hover-color, #fff)) !important;
-  background-color: var(--su-menu-active-bg, #001528) !important;
+  background-color: var(--su-menu-active-bg, rgba(255, 255, 255, 0.08)) !important;
   border-left: 3px solid var(--su-menu-active, #409eff) !important;
   box-sizing: border-box;
 }
@@ -85,7 +85,7 @@ html, body {
 .menu .el-menu-item:hover:not(.is-active),
 .menu .el-menu .el-menu-item:hover:not(.is-active) {
   color: var(--su-menu-hover-color, #fff) !important;
-  background-color: var(--su-menu-hover-bg, rgba(0, 0, 0, 0.35)) !important;
+  background-color: var(--su-menu-hover-bg, rgba(255, 255, 255, 0.06)) !important;
 }
 
 .menu .el-submenu__title:hover,
@@ -738,7 +738,7 @@ html, body {
 
     &.is-active {
       color: var(--su-menu-active-color, var(--su-menu-hover-color, #fff)) !important;
-      background: var(--su-menu-active-bg, #001528) !important;
+      background: var(--su-menu-active-bg, rgba(255, 255, 255, 0.08)) !important;
       border-left: 3px solid var(--su-menu-active, #409eff);
       box-shadow: none !important;
     }

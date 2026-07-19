@@ -299,10 +299,10 @@ a:visited {
 :root {
   --su-menu-bg: #e0e0e0 !important;
   --su-menu-color: #586b7d !important;
-  --su-menu-hover-bg: #cfd6de;
+  --su-menu-hover-bg: rgba(0, 0, 0, 0.04);
   --su-menu-hover-color: #213a53;
   --su-menu-active: #02c0ce;
-  --su-menu-active-bg: #cfd6de !important;
+  --su-menu-active-bg: rgba(0, 0, 0, 0.06);
   --su-menu-active-color: #213a53 !important;
   --su-menu-title-hover-bg: #ededed;
   --su-menu-border: rgba(88, 107, 125, 0.12) !important;
@@ -325,11 +325,11 @@ a:visited {
 .el-menu--vertical:not(.el-menu) .el-menu-item:hover,
 .el-menu--vertical:not(.el-menu) .el-menu-item:focus {
   color: #213a53 !important;
-  background: #cfd6de !important;
+  background: rgba(0, 0, 0, 0.04) !important;
 }
 .el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
   color: #213a53 !important;
-  background: #cfd6de !important;
+  background: rgba(0, 0, 0, 0.06) !important;
   border-left: 3px solid #02c0ce;
   box-shadow: none !important;
 }
@@ -545,4 +545,13 @@ p.file-upload a,
 }
 .menu .el-menu-item:hover {
   background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* simpleui-popup-active-sync */
+.el-menu--vertical:not(.el-menu) .el-menu-item:hover,
+.el-menu--vertical:not(.el-menu) .el-menu-item:focus {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+.el-menu--vertical:not(.el-menu) .el-menu-item.is-active {
+  background: rgba(0, 0, 0, 0.06) !important;
 }

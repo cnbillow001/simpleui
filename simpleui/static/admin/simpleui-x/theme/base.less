@@ -364,7 +364,7 @@ a:link, a:visited {
   --su-menu-hover-bg: @menu-background-hover;
   --su-menu-hover-color: @menu-color-hover;
   --su-menu-active: @primary;
-  --su-menu-active-bg: @menu-background-hover !important;
+  --su-menu-active-bg: fade(#fff, 8%);
   --su-menu-active-color: @menu-color-hover !important;
   --su-menu-title-hover-bg: @menu-title-background-color-hover;
   --su-menu-border: fade(@menu-color, 12%);
@@ -389,12 +389,12 @@ a:link, a:visited {
 
     &:hover, &:focus {
       color: @menu-color-hover !important;
-      background: @menu-background-hover !important;
+      background: fade(#fff, 6%) !important;
     }
 
     &.is-active {
       color: @menu-color-hover !important;
-      background: @menu-background-hover !important;
+      background: fade(#fff, 8%) !important;
       border-left: 3px solid @primary;
       box-shadow: none !important;
     }

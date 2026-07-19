@@ -8,11 +8,11 @@ Vue.component('sub-menu', {
     template: `
         <div>
             <template v-for="(item,i) in menus" :key="item.eid">
-                <el-menu-item  :index="item.eid" v-if="!item.models" @click="openTab(item,item.eid)">
+                <el-menu-item  :index="String(item.eid)" v-if="!item.models" @click="openTab(item,item.eid)">
                     <i :class="'menu-icon '+item.icon"></i>
                     <span v-show="!fold">{{item.name}}</span>
                 </el-menu-item>
-                <el-submenu :index="item.eid" v-else>
+                <el-submenu :index="String(item.eid)" v-else>
                     <template slot="title">
                         <i :class="'menu-icon '+item.icon"></i>
                         <span v-show="!fold">{{item.name}}</span>

@@ -113,8 +113,8 @@
                             {% block breadcrumb %}
                                 <el-breadcrumb v-if="!mobile" style="display: inline-block;" separator="/">
                                     {% verbatim myclode %}
-                                        <el-breadcrumb-item><i :class="menus[0].icon"
-                                                               :key="menus[0].name"></i>{{ menus[0].name }}
+                                        <el-breadcrumb-item v-if="!breadcrumbs || breadcrumbs.length === 0">
+                                            <i :class="menus[0].icon" :key="menus[0].name"></i>{{ menus[0].name }}
                                         </el-breadcrumb-item>
                                         <el-breadcrumb-item v-for="(item, bIndex) in breadcrumbs"
                                                             :key="(item.name || '') + '-' + bIndex">

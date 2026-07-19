@@ -25,7 +25,8 @@
             var item = app.menuData[i]
             // Avoid matching items without url against "/"
             if (item.url && item.url == hash) {
-                app.openTab(item, item.eid, true, false);
+                // selected=false: ensure tab exists after refresh; index as string for el-menu
+                app.openTab(item, String(item.eid), false, false);
                 break;
             }
         }
@@ -48,10 +49,23 @@
     }
 
     function resolveBreadcrumbs(item) {
-        if (!item || isHomeTab(item) || !item.breadcrumbs) {
+        if (!item || isHomeTab(item)) {
             return [];
         }
-        return item.breadcrumbs;
+        if (item.breadcrumbs && item.breadcrumbs.length) {
+            return item.breadcrumbs;
+        }
+        // Tabs restored from sessionStorage may lack breadcrumbs; recover from menuData.
+        if (window.app && app.menuData && item.url) {
+            for (var i = 0; i < app.menuData.length; i++) {
+                var menuItem = app.menuData[i];
+                if (menuItem.url === item.url && menuItem.breadcrumbs && menuItem.breadcrumbs.length) {
+                    item.breadcrumbs = menuItem.breadcrumbs;
+                    return menuItem.breadcrumbs;
+                }
+            }
+        }
+        return [];
     }
 
     window.callback = function () {
@@ -321,15 +335,15 @@
             if (temp_tabs && temp_tabs != '') {
                 this.tabs = JSON.parse(temp_tabs);
             }
-            if (location.hash != '') {
-                openByHash();
-            }
-
             //elementui布局问题，导致页面不能正常撑开，调用resize使其重新计算
             if (window.onresize) {
                 window.onresize();
             }
             this.$nextTick(function () {
+                // Restore menu active after el-menu items are registered
+                if (location.hash != '') {
+                    openByHash();
+                }
                 if (window.renderCallback) {
                     window.renderCallback(this);
                 }
@@ -561,15 +575,19 @@
                     }
                     if (isLight(bg)) {
                         root.style.setProperty('--su-menu-color', color || '#606266');
-                        root.style.setProperty('--su-menu-hover-bg', 'rgba(0, 0, 0, 0.06)');
+                        root.style.setProperty('--su-menu-hover-bg', 'rgba(0, 0, 0, 0.04)');
                         root.style.setProperty('--su-menu-hover-color', '#303133');
+                        root.style.setProperty('--su-menu-active-bg', 'rgba(0, 0, 0, 0.06)');
+                        root.style.setProperty('--su-menu-active-color', '#303133');
                         root.style.setProperty('--su-menu-title-hover-bg', 'rgba(0, 0, 0, 0.06)');
                         root.style.setProperty('--su-menu-border', 'rgba(0, 0, 0, 0.08)');
                     } else if (bg) {
                         root.style.setProperty('--su-menu-color', color || '#bfcbd9');
-                        root.style.setProperty('--su-menu-hover-bg', 'rgba(0, 0, 0, 0.35)');
+                        root.style.setProperty('--su-menu-hover-bg', 'rgba(255, 255, 255, 0.06)');
                         root.style.setProperty('--su-menu-hover-color', '#ffffff');
-                        root.style.setProperty('--su-menu-title-hover-bg', 'rgba(0, 0, 0, 0.28)');
+                        root.style.setProperty('--su-menu-active-bg', 'rgba(255, 255, 255, 0.08)');
+                        root.style.setProperty('--su-menu-active-color', '#ffffff');
+                        root.style.setProperty('--su-menu-title-hover-bg', 'rgba(255, 255, 255, 0.06)');
                         root.style.setProperty('--su-menu-border', 'rgba(255, 255, 255, 0.12)');
                     }
                 }
@@ -592,6 +610,11 @@
                         }
                         if (accent && accent !== 'rgba(0, 0, 0, 0)') {
                             root.style.setProperty('--su-menu-active', accent);
+                        }
+                        // Match collapsed popup active bg to expanded sidebar selection.
+                        var activeBg = activeStyle.backgroundColor;
+                        if (activeBg && activeBg !== 'transparent' && activeBg !== 'rgba(0, 0, 0, 0)') {
+                            root.style.setProperty('--su-menu-active-bg', activeBg);
                         }
                     }
                 }

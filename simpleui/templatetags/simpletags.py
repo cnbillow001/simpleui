@@ -273,30 +273,35 @@ def menus(context, _get_config=None):
     if has_permission_in_config(config):
         config["menus"] = get_filtered_menus(config["menus"], context.request.user.get_all_permissions())
 
+    def attach_menu_breadcrumbs(menu_list):
+        """Ensure leaf menus have breadcrumbs for the header trail."""
+        for i in menu_list or []:
+            if 'models' in i:
+                for k in i.get('models') or []:
+                    k['breadcrumbs'] = [{
+                        'name': i.get('name'),
+                        'icon': i.get('icon')
+                    }, {
+                        'name': k.get('name'),
+                        'icon': k.get('icon')
+                    }]
+            else:
+                i['breadcrumbs'] = [{
+                    'name': i.get('name'),
+                    'icon': i.get('icon')
+                }]
+        return menu_list
+
     # 如果有menu 就读取，没有就调用系统的
     key = 'system_keep'
     if config and 'menus' in config:
         if config.get(key, None):
-            temp = config.get('menus')
+            temp = attach_menu_breadcrumbs(config.get('menus'))
             for i in temp:
-                # 处理面包屑
-                if 'models' in i:
-                    for k in i.get('models'):
-                        k['breadcrumbs'] = [{
-                            'name': i.get('name'),
-                            'icon': i.get('icon')
-                        }, {
-                            'name': k.get('name'),
-                            'icon': k.get('icon')
-                        }]
-                else:
-                    i['breadcrumbs'] = [{
-                        'name': i.get('name'),
-                        'icon': i.get('icon')
-                    }]
                 data.append(i)
         else:
-            data = config.get('menus')
+            # system_keep=False previously skipped breadcrumbs, so header stuck on 首页
+            data = attach_menu_breadcrumbs(config.get('menus'))
 
     # 获取侧边栏排序, 如果设置了就按照设置的内容排序, 留空则表示默认排序以及全部显示
     if config.get('menu_display') is not None:
@@ -324,7 +329,8 @@ def menus(context, _get_config=None):
 def handler_eid(data, eid):
     for i in data:
         eid += 1
-        i['eid'] = eid
+        # String eid so el-menu default-active matches item index after refresh.
+        i['eid'] = str(eid)
         if 'models' in i:
             eid = handler_eid(i.get('models'), eid)
     return eid
