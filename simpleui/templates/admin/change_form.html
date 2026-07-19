@@ -10,9 +10,10 @@
     var select2Url = '{% static "admin/js/vendor/select2/select2.full.js" %}';
 
     function cleanupSelect2Globals() {
-        if (window.django && window.django.jQuery && window.jQuery === window.django.jQuery) {
-            window.jQuery = undefined;
-            window.$ = undefined;
+        // Keep $ / jQuery aliases for SimpleUI inline scripts after dynamic Select2 load.
+        if (window.django && window.django.jQuery) {
+            window.jQuery = window.django.jQuery;
+            window.$ = window.django.jQuery;
         }
     }
 

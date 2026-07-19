@@ -530,10 +530,22 @@ p.file-upload a,
 .menu .el-submenu.is-opened > .el-menu.el-menu--inline {
   background-color: #c5ccd4 !important;
 }
-.menu .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:not(.is-active) {
+.menu .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item:not(.is-active) {
   background-color: transparent !important;
 }
-.menu .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:hover,
-.menu .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item.is-active {
-  background-color: #c5ccd4 !important;
+.menu .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+.menu .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item.is-active {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* simpleui-active-menu-soften */
+.menu .el-menu-item.is-active,
+.menu .el-menu .el-menu-item.is-active,
+.menu .el-menu .is-active.el-menu-item {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+.menu .el-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
 }

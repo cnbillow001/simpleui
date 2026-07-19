@@ -281,7 +281,8 @@ a:link, a:visited {
   .el-menu .el-menu-item.is-active,
   .el-menu .is-active.el-menu-item {
     color: @menu-color-hover !important;
-    background-color: @menu-background-hover !important;
+    /* Soft wash + left accent; avoid heavy solid hover blocks. */
+    background-color: fade(#fff, 8%) !important;
     border-left: 3px solid @primary;
     box-sizing: border-box;
   }
@@ -291,7 +292,7 @@ a:link, a:visited {
   }
 
   .el-menu-item:hover {
-    background-color: @menu-background-hover !important;
+    background-color: fade(#fff, 6%) !important;
     color: @menu-color-hover !important;
   }
 
@@ -335,13 +336,16 @@ a:link, a:visited {
     background-color: @menu-submenu-background !important;
   }
 
-  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:not(.is-active) {
+  .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item:not(.is-active) {
     background-color: transparent !important;
   }
 
-  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item:hover,
-  .el-submenu.is-opened > .el-menu.el-menu--inline > .el-menu-item.is-active {
-    background-color: @menu-background-hover !important;
+  .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item:hover {
+    background-color: fade(#fff, 6%) !important;
+  }
+
+  .el-submenu.is-opened .el-menu.el-menu--inline .el-menu-item.is-active {
+    background-color: fade(#fff, 8%) !important;
   }
 
   .el-submenu,

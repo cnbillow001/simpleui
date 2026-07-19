@@ -50,6 +50,13 @@
     <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'admin/js/vendor/select2/select2.full.js' %}"></script>
     <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script type="text/javascript">
+        // django.jQuery.noConflict(true) clears window.$; SimpleUI templates still use $.
+        if (window.django && window.django.jQuery) {
+            window.jQuery = window.django.jQuery;
+            window.$ = window.django.jQuery;
+        }
+    </script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/form-select.js' %}?_={% get_version %}"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/selector-theme.js' %}?_={% get_version %}"></script>
 </head>
