@@ -13,7 +13,9 @@
     {% autoescape off %}
         {% load_dates %}
     {% endautoescape %}
-    <!-- search_form.html -->
+    <!-- search_form.html v2.11 -->
+    {% toolbar_search_row cl as search_btn_row %}
+    {% toolbar_search_full_row cl as search_btn_full_row %}
     <div id="toolbar">
         <form id="changelist-search" method="get" onsubmit="preSubmit(this)">
             <input type="hidden" name="p" value=""/>
@@ -35,11 +37,18 @@
                     {% for spec in cl.filter_specs %}
                         {% if spec|get_date_type == 'date' or spec|get_date_type == 'datetime' %}
 
-                            <el-date-picker class="simpleui-form-item"
+                            <el-date-picker class="simpleui-form-item simpleui-form-item--range"
                                     size="small"
+                                    clearable
                                     v-model="{{ spec.field_path }}"
                                     @change="change{{ spec|get_date_type|capfirst }}"
                                     type="{{ spec|get_date_type }}range"
+                                    range-separator="至"
+                                    {% if spec|get_date_type == 'datetime' %}
+                                    format="yyyy-MM-dd HH:mm"
+                                    {% else %}
+                                    format="yyyy-MM-dd"
+                                    {% endif %}
                                     start-placeholder="{{ spec.title }}"
                                     end-placeholder="{{ spec.title }}">
                             </el-date-picker>
@@ -92,8 +101,12 @@
 
                     {% endfor %}
                 {% endif %}
-                <el-button size="small" type="primary" icon="el-icon-search" @click="formSubmit()">{% trans 'Search' %}</el-button>
-
+                <div class="simpleui-form-search-cell{% if search_btn_full_row == '1' %} simpleui-form-search-cell--full{% endif %}"
+                     data-search-row="{{ search_btn_row }}"
+                     style="grid-row: {{ search_btn_row }}; {% if search_btn_full_row == '1' %}grid-column: 1 / -1; display: flex; justify-content: flex-end;{% else %}grid-column: 4 / 5; justify-self: end;{% endif %}">
+                    <el-button size="small" type="primary" class="simpleui-form-search-btn" icon="el-icon-search" @click="formSubmit()">{% trans 'Search' %}</el-button>
+                </div>
+            </div>
 
             {% if show_result_count %}
                 <span class="small quiet">{% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %} (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">{% if cl.show_full_result_count %}{% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}{% else %}{% trans "Show all" %}{% endif %}</a>)</span>
@@ -108,7 +121,6 @@
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-            </div>
         </form>
     </div>
 
@@ -123,23 +135,214 @@
             }
             return val
         }
-        Date.prototype.format = function (fmt) {
+        function isValidDate(value) {
+            return Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime());
+        }
+
+        function parseFilterDate(value) {
+            if (!value) {
+                return null;
+            }
+            if (isValidDate(value)) {
+                return value;
+            }
+            var text = String(value).trim();
+            if (!text) {
+                return null;
+            }
+            var parsed = new Date(text.replace(/-/g, '/'));
+            return isValidDate(parsed) ? parsed : null;
+        }
+
+        function formatFilterDate(value, fmt) {
+            var date = parseFilterDate(value);
+            if (!date) {
+                return '';
+            }
             var o = {
-                "M+": this.getMonth() + 1,                 //月份
-                "d+": this.getDate(),                    //日
-                "h+": this.getHours(),                   //小时
-                "m+": this.getMinutes(),                 //分
-                "s+": this.getSeconds(),                 //秒
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                "S": this.getMilliseconds()             //毫秒
+                "M+": date.getMonth() + 1,
+                "d+": date.getDate(),
+                "h+": date.getHours(),
+                "m+": date.getMinutes(),
+                "s+": date.getSeconds(),
+                "q+": Math.floor((date.getMonth() + 3) / 3),
+                "S": date.getMilliseconds()
             };
-            if (/(y+)/.test(fmt))
-                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-                if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            if (/(y+)/.test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(fmt)) {
+                    fmt = fmt.replace(
+                        RegExp.$1,
+                        (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length))
+                    );
+                }
+            }
             return fmt;
         }
+        function hasInputText(value) {
+            return value !== undefined && value !== null && String(value).trim() !== '';
+        }
+
+        function hasSelectValue(vm) {
+            if (vm.multiple) {
+                return Array.isArray(vm.value) && vm.value.length > 0;
+            }
+            return vm.value !== undefined && vm.value !== null && vm.value !== '';
+        }
+
+        (function patchSearchClearControls() {
+            if (!window.Vue) {
+                return;
+            }
+
+            function isToolbarFilterControl(vm) {
+                return vm.$el && vm.$el.closest && vm.$el.closest('#changelist #toolbar');
+            }
+
+            function setHasValue(el, hasValue) {
+                if (!el) {
+                    return;
+                }
+                el.setAttribute('data-has-value', hasValue ? 'true' : 'false');
+            }
+
+            function resyncAfterMouseleave(syncFn) {
+                window.setTimeout(syncFn, 0);
+            }
+
+            function bindToolbarDatePickerClear(vm) {
+                if (!vm || !vm.clearable || !isToolbarFilterControl(vm)) {
+                    return;
+                }
+                if (vm.$el && vm.$el.dataset.clearBound === '1') {
+                    return;
+                }
+                if (vm.$el) {
+                    vm.$el.dataset.clearBound = '1';
+                }
+
+                var lockShowClose = false;
+                var syncDateClose = function () {
+                    var hasValue = !vm.valueIsEmpty;
+                    setHasValue(vm.$el, hasValue);
+                    lockShowClose = true;
+                    vm.showClose = hasValue;
+                    vm.$nextTick(function () {
+                        lockShowClose = false;
+                    });
+                };
+
+                syncDateClose();
+                vm.$watch('value', syncDateClose, {deep: true});
+
+                // Element UI 在 mouseleave 时会把 showClose 置 false，有值时需立即恢复
+                vm.$watch('showClose', function (visible) {
+                    if (lockShowClose) {
+                        return;
+                    }
+                    if (!vm.clearable || vm.readonly || vm.pickerDisabled) {
+                        return;
+                    }
+                    if (!vm.valueIsEmpty && !visible) {
+                        lockShowClose = true;
+                        vm.showClose = true;
+                        vm.$nextTick(function () {
+                            lockShowClose = false;
+                        });
+                    }
+                });
+            }
+
+            Vue.mixin({
+                mounted: function () {
+                    if (!isToolbarFilterControl(this)) {
+                        return;
+                    }
+
+                    var vm = this;
+                    var name = vm.$options.name;
+
+                    if (name === 'ElInput' && vm.clearable) {
+                        if (vm.$parent && vm.$parent.$options.name === 'ElSelect') {
+                            return;
+                        }
+                        var syncInput = function () {
+                            var hasValue = hasInputText(vm.nativeInputValue);
+                            vm.hovering = hasValue;
+                            setHasValue(vm.$el, hasValue);
+                            vm.$nextTick(function () {
+                                vm.$forceUpdate();
+                            });
+                        };
+                        syncInput();
+                        vm.$watch(function () {
+                            return vm.nativeInputValue;
+                        }, syncInput);
+                        if (!vm.$el.dataset.clearBound) {
+                            vm.$el.dataset.clearBound = '1';
+                            vm.$el.addEventListener('mouseleave', function () {
+                                resyncAfterMouseleave(syncInput);
+                            });
+                        }
+                    }
+
+                    if (name === 'ElSelect' && vm.clearable) {
+                        var syncSelect = function () {
+                            var hasValue = hasSelectValue(vm);
+                            vm.inputHovering = hasValue;
+                            setHasValue(vm.$el, hasValue);
+                            vm.$nextTick(function () {
+                                vm.$forceUpdate();
+                            });
+                        };
+                        syncSelect();
+                        vm.$watch('value', syncSelect, {deep: true});
+                        if (!vm.$el.dataset.clearBound) {
+                            vm.$el.dataset.clearBound = '1';
+                            vm.$el.addEventListener('mouseleave', function () {
+                                resyncAfterMouseleave(syncSelect);
+                            });
+                        }
+                    }
+
+                    if (name === 'ElDatePicker' && vm.clearable) {
+                        bindToolbarDatePickerClear(vm);
+                    }
+                }
+            });
+
+            try {
+                function patchRegisteredComponent(name, patchFn) {
+                    var component = Vue.options.components[name];
+                    if (!component || !component.options) {
+                        return;
+                    }
+                    patchFn(component.options);
+                }
+
+                patchRegisteredComponent('ElInput', function (opts) {
+                    opts.computed = Object.assign({}, opts.computed || {}, {
+                        showClear: function () {
+                            return this.clearable && !this.inputDisabled && !this.readonly && hasInputText(this.nativeInputValue);
+                        }
+                    });
+                });
+
+                patchRegisteredComponent('ElSelect', function (opts) {
+                    opts.computed = Object.assign({}, opts.computed || {}, {
+                        showClose: function () {
+                            return this.clearable && !this.selectDisabled && hasSelectValue(this);
+                        }
+                    });
+                });
+            } catch (e) {
+                console.warn('检索栏清除按钮补丁加载失败', e);
+            }
+            window.bindToolbarDatePickerClear = bindToolbarDatePickerClear;
+        })();
+
         var searchApp = new Vue({
             el: '#toolbar',
             data: {
@@ -175,15 +378,34 @@
                     self[key] = value;
                 });
                 try {
-                    date_field.forEach(key => {
-                        var start = self[key + "__gte"];
-                        var end = self[key + "__lte"];
-                        self[key] = [start, end];
+                    date_field.forEach(function (key) {
+                        var start = parseFilterDate(self[key + "__gte"]);
+                        var end = parseFilterDate(self[key + "__lte"]);
+                        if (start && end) {
+                            self[key] = [start, end];
+                        } else {
+                            self[key] = '';
+                        }
                     });
                 } catch (e) {
-                    console.warn('日期值回显失败，也许是django版本问题，请至github报告此问题：https://github.com/newpanjing/simpleui/issues');
+                    console.warn('日期值回显失败，也许是django版本问题，请至github报告此问题：https://github.com/newpanjing/simpleui/issues', e);
                 }
 
+            },
+            mounted: function () {
+                var self = this;
+                this.$el.querySelectorAll('.simpleui-form-item').forEach(function (el) {
+                    if (!el.hasAttribute('data-has-value')) {
+                        el.setAttribute('data-has-value', 'false');
+                    }
+                });
+                this.$nextTick(function () {
+                    self.$el.querySelectorAll('.el-date-editor.el-range-editor').forEach(function (el) {
+                        if (el.__vue__ && window.bindToolbarDatePickerClear) {
+                            window.bindToolbarDatePickerClear(el.__vue__);
+                        }
+                    });
+                });
             },
             watch: {
                 {% if cl.has_filters %}
@@ -192,28 +414,24 @@
                             '{{ spec.field_path }}': function (newValue, oldValue) {
                                 var type = '{{ spec | get_date_type }}'
                                 try {
-                                    if (newValue) {
-                                        if (newValue[0] != "" && newValue[1] != "") {
-
+                                    if (newValue && Array.isArray(newValue)) {
+                                        var startDate = parseFilterDate(newValue[0]);
+                                        var endDate = parseFilterDate(newValue[1]);
+                                        if (startDate && endDate) {
                                             if (type == 'date') {
-                                                this['{{ spec.field_generic }}gte'] = newValue[0].format('yyyy-MM-dd');
-                                                this['{{ spec.field_generic }}lte'] = newValue[1].format('yyyy-MM-dd');
+                                                this['{{ spec.field_generic }}gte'] = formatFilterDate(startDate, 'yyyy-MM-dd');
+                                                this['{{ spec.field_generic }}lte'] = formatFilterDate(endDate, 'yyyy-MM-dd');
                                             } else if (type == 'datetime') {
-                                                this['{{ spec.field_generic }}gte'] = newValue[0].format('yyyy-MM-dd hh:mm:ss{% get_tz_suffix %}');
-                                                this['{{ spec.field_generic }}lte'] = newValue[1].format('yyyy-MM-dd hh:mm:ss{% get_tz_suffix %}');
+                                                this['{{ spec.field_generic }}gte'] = formatFilterDate(startDate, 'yyyy-MM-dd hh:mm:ss{% get_tz_suffix %}');
+                                                this['{{ spec.field_generic }}lte'] = formatFilterDate(endDate, 'yyyy-MM-dd hh:mm:ss{% get_tz_suffix %}');
                                             }
                                         }
                                     } else {
-                                        if (type == 'date') {
-                                            this['{{ spec.field_generic }}gte'] = '';
-                                            this['{{ spec.field_generic }}lte'] = '';
-                                        } else if (type == 'datetime') {
-                                            this['{{ spec.field_generic }}gte'] = '';
-                                            this['{{ spec.field_generic }}lte'] = '';
-                                        }
+                                        this['{{ spec.field_generic }}gte'] = '';
+                                        this['{{ spec.field_generic }}lte'] = '';
                                     }
                                 } catch (e) {
-                                    //
+                                    console.warn('日期筛选同步失败', e);
                                 }
                                 {#console.log(newValue)#}
                                 {#console.log(oldValue)#}

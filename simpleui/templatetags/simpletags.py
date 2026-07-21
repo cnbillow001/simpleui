@@ -618,6 +618,51 @@ def get_verbose_name_plural(context):
     return context['cl'].model._meta.verbose_name_plural
 
 
+def _toolbar_filter_span(spec):
+    if hasattr(spec, 'field'):
+        field = spec.field
+        if isinstance(field, models.DateTimeField) or isinstance(field, models.DateField):
+            return 2
+    return 1
+
+
+def _compute_toolbar_search_layout(cl):
+    cols = 4
+    col = 0
+    row = 1
+
+    if cl.search_fields:
+        col += 1
+        if col >= cols:
+            row += 1
+            col = 0
+
+    if cl.has_filters:
+        for spec in cl.filter_specs:
+            span = _toolbar_filter_span(spec)
+            if col + span > cols:
+                row += 1
+                col = 0
+            col += span
+            if col >= cols:
+                row += 1
+                col = 0
+
+    return row, col == 0
+
+
+@register.simple_tag
+def toolbar_search_row(cl):
+    row, _full_width = _compute_toolbar_search_layout(cl)
+    return row
+
+
+@register.simple_tag
+def toolbar_search_full_row(cl):
+    _row, full_width = _compute_toolbar_search_layout(cl)
+    return '1' if full_width else '0'
+
+
 @register.simple_tag
 def django_version_is_gte_32x():
     arrays = django.get_version().split(".")

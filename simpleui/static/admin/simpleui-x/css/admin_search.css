@@ -1,0 +1,256 @@
+/* Admin changelist search toolbar */
+#changelist #toolbar {
+  --su-filter-columns: 4;
+  --su-filter-field-width: 240px;
+  --su-filter-gap: 10px;
+  --su-filter-clear-size: 14px;
+  --su-filter-range-width: calc(var(--su-filter-field-width) * 2 + var(--su-filter-gap));
+
+  margin-bottom: 0 !important;
+  background: var(--su-input-focus-ring, rgba(64, 158, 255, 0.04));
+  border-bottom: 1px solid var(--su-input-border, #ebeef5);
+}
+
+#changelist #toolbar .simpleui-form {
+  display: grid;
+  grid-template-columns: repeat(var(--su-filter-columns), minmax(0, 1fr));
+  gap: var(--su-filter-gap);
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+}
+
+#changelist #toolbar .simpleui-form-item {
+  display: inline-flex;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-right: 0 !important;
+  vertical-align: middle;
+}
+
+#changelist #toolbar .simpleui-form-item--range.el-date-editor--daterange,
+#changelist #toolbar .simpleui-form-item--range.el-date-editor--datetimerange {
+  grid-column: span 2;
+  width: 100% !important;
+  max-width: none;
+}
+
+#changelist #toolbar .el-input.simpleui-form-item .el-input__inner {
+  width: 100%;
+}
+
+#changelist #toolbar .el-range-editor.el-input__inner {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 32px;
+  line-height: 30px;
+  padding: 0 6px 0 8px;
+  overflow: hidden;
+  border-color: var(--su-input-border, #dcdfe6);
+  background: var(--su-input-bg, #fff);
+}
+
+#changelist #toolbar .el-range-editor.is-active,
+#changelist #toolbar .el-range-editor.is-active:hover {
+  border-color: var(--su-input-focus-border, var(--primary, #409eff));
+}
+
+#changelist #toolbar .el-range-editor .el-range-input {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto !important;
+  height: 30px;
+  line-height: 30px;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  outline: 0;
+  font-size: 12px;
+  color: var(--su-input-text, #606266);
+  text-align: left;
+  background-color: transparent;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#changelist #toolbar .el-range-editor .el-range-input::placeholder {
+  text-align: left;
+  color: #c0c4cc;
+}
+
+#changelist #toolbar .el-range-editor .el-range-separator {
+  flex: 0 0 auto;
+  width: auto !important;
+  height: 30px;
+  padding: 0 4px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 30px;
+  color: #909399;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#changelist #toolbar .el-range-editor .el-range__icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 30px;
+  margin-left: 0;
+  float: none;
+  font-size: var(--su-filter-clear-size);
+  line-height: 1;
+  color: #c0c4cc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#changelist #toolbar .el-range-editor .el-range__close-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 30px;
+  margin-left: 2px;
+  float: none;
+  font-size: 14px;
+  line-height: 1;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #c0c4cc;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  cursor: default;
+}
+
+#changelist #toolbar .simpleui-form-item:not(.simpleui-form-item--range) .el-input__suffix {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  top: 0;
+}
+
+#changelist #toolbar .simpleui-form-item:not(.simpleui-form-item--range) .el-input__suffix-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+#changelist #toolbar .simpleui-form-item[data-has-value="false"] .el-input__clear,
+#changelist #toolbar .simpleui-form-item[data-has-value="false"] .el-icon-circle-close {
+  display: none !important;
+}
+
+#changelist #toolbar .simpleui-form-item:not(.simpleui-form-item--range)[data-has-value="true"] .el-input__clear,
+#changelist #toolbar .simpleui-form-item:not(.simpleui-form-item--range)[data-has-value="true"] .el-icon-circle-close {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: var(--su-filter-clear-size);
+  height: var(--su-filter-clear-size);
+  font-size: 14px;
+  line-height: 1;
+  opacity: 1 !important;
+  visibility: visible !important;
+  cursor: pointer;
+}
+
+#changelist #toolbar .simpleui-form-item[data-has-value="true"] .el-range__close-icon {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+#changelist #toolbar .simpleui-form-item[data-has-value="true"] .el-range__close-icon:not(.el-icon-circle-close)::before {
+  content: "\e78d";
+  font-family: element-icons !important;
+}
+
+#changelist #toolbar .simpleui-form-item[data-has-value="false"] .el-range__close-icon {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#changelist #toolbar .simpleui-form-item[data-has-value="true"] .el-select__caret.el-icon-arrow-up {
+  display: none !important;
+}
+
+#changelist #toolbar .el-range-editor .el-range__close-icon:hover {
+  color: #909399;
+}
+
+#changelist #toolbar .el-select .el-input__suffix {
+  right: 4px;
+}
+
+#changelist #toolbar .el-select .el-input__inner {
+  padding-right: 28px;
+}
+
+#changelist #toolbar .el-input__inner,
+#changelist #toolbar .el-select .el-input__inner {
+  border-color: var(--su-input-border, #dcdfe6);
+}
+
+#changelist #toolbar .simpleui-form > input[type="hidden"] {
+  display: none !important;
+}
+
+#changelist #toolbar .simpleui-form-search-cell {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+}
+
+#changelist #toolbar .simpleui-form-search-cell--full {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+  max-width: 100%;
+  justify-content: flex-end !important;
+}
+
+#changelist #toolbar .simpleui-form-search-cell:not(.simpleui-form-search-cell--full) {
+  grid-column: 4 / 5 !important;
+  justify-self: end !important;
+}
+
+#changelist #toolbar .simpleui-form-search-btn.el-button--primary {
+  width: auto;
+  max-width: max-content;
+  background: var(--su-input-accent, var(--primary, #409eff));
+  border-color: var(--su-input-accent, var(--primary, #409eff));
+}
+
+#changelist #toolbar .small.quiet {
+  grid-column: 1 / -1;
+  margin-left: 0;
+  font-size: 12px;
+  color: #909399;
+}
+
+@media (max-width: 640px) {
+  #changelist #toolbar .simpleui-form {
+    grid-template-columns: 1fr;
+  }
+
+  #changelist #toolbar .simpleui-form-item--range.el-date-editor--daterange,
+  #changelist #toolbar .simpleui-form-item--range.el-date-editor--datetimerange {
+    grid-column: span 1;
+  }
+
+  #changelist #toolbar .simpleui-form-search-cell {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+}
