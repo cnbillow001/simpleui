@@ -1,0 +1,38 @@
+{% if confirm_table and confirm_table.rows %}
+  <div class="admin-confirm-panel__section admin-confirm-panel__section--table">
+    <div class="admin-confirm-panel__table-scroll">
+      <table class="admin-confirm-panel__table">
+        <thead>
+          <tr>
+            {% for header in confirm_table.headers %}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in confirm_table.rows %}
+            <tr>
+              {% for cell in row %}
+                <td>{{ cell }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{% if related_delete_summary %}
+  <div class="admin-confirm-panel__section admin-confirm-panel__section--related">
+    <h3>关联删除</h3>
+    <ul class="admin-confirm-panel__summary">
+      {% for item in related_delete_summary %}
+        <li>
+          <span class="admin-confirm-panel__label">{{ item.label }}</span>
+          <span class="admin-confirm-panel__value">{{ item.count }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

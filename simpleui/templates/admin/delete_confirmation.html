@@ -1,0 +1,85 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+  {{ block.super }}
+  {{ media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; <a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|truncatewords:"18" }}</a>
+  &rsaquo; 删除确认
+</div>
+{% endblock %}
+
+{% block content %}
+{% if perms_lacking %}
+  <div class="module admin-confirm-panel admin-confirm-panel--error">
+    <h2>无法删除</h2>
+    <p class="help">
+      删除 {{ object_name }}「{{ object }}」会连带删除关联对象，但您的账号没有以下对象的删除权限。
+    </p>
+    <div class="admin-confirm-panel__section">
+      <ul id="deleted-objects" class="admin-confirm-panel__object-list">{{ perms_lacking|unordered_list }}</ul>
+    </div>
+  </div>
+{% elif protected %}
+  <div class="module admin-confirm-panel admin-confirm-panel--warning">
+    <h2>存在受保护对象</h2>
+    <p class="help">
+      删除 {{ object_name }}「{{ object }}」需要先删除以下受保护关联对象。
+    </p>
+    <div class="admin-confirm-panel__section">
+      <ul id="deleted-objects" class="admin-confirm-panel__object-list">{{ protected|unordered_list }}</ul>
+    </div>
+  </div>
+{% else %}
+  <form method="post" class="admin-delete-confirm-form">
+    {% csrf_token %}
+    <div class="module admin-confirm-panel">
+      <h2>请核对以下{{ object_name }}</h2>
+      <p class="help">
+        请仔细核对即将删除的记录。确认后数据将被永久删除，此操作不可恢复。
+      </p>
+
+      {% include "admin/includes/delete_confirm_table.html" %}
+
+      {% if not confirm_table or not confirm_table.rows %}
+        {% if model_count %}
+          <div class="admin-confirm-panel__section">
+            <h3>删除概览</h3>
+            <ul class="admin-confirm-panel__summary">
+              {% for model_name, object_count in model_count %}
+                <li>
+                  <span class="admin-confirm-panel__label">{{ model_name|capfirst }}</span>
+                  <span class="admin-confirm-panel__value">{{ object_count }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <div class="admin-confirm-panel__section">
+          <h3>待删除对象</h3>
+          <ul id="deleted-objects" class="admin-confirm-panel__object-list">{{ deleted_objects|unordered_list }}</ul>
+        </div>
+      {% endif %}
+    </div>
+
+    <input type="hidden" name="post" value="yes">
+    {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+    {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+
+    <div class="submit-row">
+      <a href="{% url opts|admin_urlname:'changelist' %}" class="button cancel-link">取消</a>
+      <input type="submit" value="确认永久删除" class="default">
+    </div>
+  </form>
+{% endif %}
+{% endblock %}

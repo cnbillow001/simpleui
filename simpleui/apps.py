@@ -7,6 +7,13 @@ class SimpleApp(AppConfig):
     def ready(self):
         self._remove_xframe_options_middleware()
         self._patch_admin_urls()
+        self._patch_delete_confirm_table()
+
+    @staticmethod
+    def _patch_delete_confirm_table():
+        from simpleui.admin_confirm import patch_model_admin_delete_confirm
+
+        patch_model_admin_delete_confirm()
 
     @staticmethod
     def _remove_xframe_options_middleware():
