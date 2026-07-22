@@ -107,6 +107,9 @@ class DeleteConfirmTableMixin:
         if field_name in labels:
             return labels[field_name]
 
+        if field_name in ('__str__', '__unicode__'):
+            return str(self.model._meta.verbose_name)
+
         method = getattr(self, field_name, None)
         if method is not None and hasattr(method, 'short_description'):
             return str(method.short_description)
@@ -117,13 +120,22 @@ class DeleteConfirmTableMixin:
             return field_name.replace('_', ' ')
 
     def format_delete_confirm_cell(self, obj, field_name):
-        method = getattr(self, field_name, None)
-        if method is not None and callable(method):
-            value = method(obj)
-        elif hasattr(obj, f'get_{field_name}_display'):
-            value = getattr(obj, f'get_{field_name}_display')()
+        # Django default list_display is ('__str__',). Calling ModelAdmin.__str__(obj)
+        # raises TypeError; resolve the object string representation instead.
+        if field_name in ('__str__', '__unicode__'):
+            value = str(obj)
         else:
-            value = getattr(obj, field_name, None)
+            method = getattr(self, field_name, None)
+            if method is not None and callable(method) and not isinstance(method, type):
+                # Bound ModelAdmin helpers take (self, obj); skip plain type objects.
+                try:
+                    value = method(obj)
+                except TypeError:
+                    value = getattr(obj, field_name, None)
+            elif hasattr(obj, f'get_{field_name}_display'):
+                value = getattr(obj, f'get_{field_name}_display')()
+            else:
+                value = getattr(obj, field_name, None)
 
         if value in (None, ''):
             return '—'

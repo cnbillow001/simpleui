@@ -4,9 +4,6 @@
   padding: 0 !important;
   padding-bottom: 20px !important;
 }
-#changelist .actions {
-  width: auto !important;
-}
 :root {
   --su-input-border: #dcdfe6;
   --su-input-text: #606266;
@@ -90,8 +87,8 @@
   margin-top: 10px;
 }
 .actions .el-button {
-  margin-right: 10px;
-  margin-left: 0px;
+  margin-right: 0;
+  margin-left: 0;
 }
 .change-list #content {
   padding: 0px;
@@ -1207,6 +1204,11 @@ body,
   }
 }
 #changelist .actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  width: auto !important;
   margin-right: auto;
   position: relative;
 }
