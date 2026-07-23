@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 {% load i18n static simpletags %}
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:'en-us' }}" {% if LANGUAGE_BIDI %}dir="rtl" {% endif %}>
@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}?_=2.7">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=4.17">
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/admin_confirm.css' %}?_=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/admin_confirm.css' %}?_=1.1">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/admin_search.css' %}?_=2.11">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/vendor/select2/select2.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/autocomplete.css' %}">
@@ -61,6 +61,7 @@
     </script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/form-select.js' %}?_={% get_version %}"></script>
     <script type="text/javascript" src="{% static 'admin/simpleui-x/js/selector-theme.js' %}?_={% get_version %}"></script>
+    <script type="text/javascript" src="{% static 'admin/simpleui-x/js/admin-messages.js' %}?_=1.0"></script>
 </head>
 {% load i18n %}
 
@@ -198,19 +199,9 @@
 
         new Vue({
             created: function () {
-                var self = this;
-
-                messages.forEach(item => {
-                    setTimeout(function () {
-                        self.$notify({
-                            title: getLanuage('Tips'),
-                            message: item.msg,
-                            type: item.tag,
-                            dangerouslyUseHTMLString: true
-                        });
-                    }, 200);
-                });
-
+                if (typeof showAdminMessages === 'function') {
+                    showAdminMessages(this, messages);
+                }
             }
         })
     </script>
@@ -254,3 +245,4 @@
 <!-- END Container -->
 </body>
 </html>
+

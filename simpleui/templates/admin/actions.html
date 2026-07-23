@@ -440,12 +440,7 @@
                             if (typeof (temp.action_type) != 'undefined') {
 
                                 if (!temp.action_url) {
-                                    this.$notify({
-                                        title: 'error',
-                                        message: 'action must contain attributes:action_url! ',
-                                        type: 'error',
-                                        dangerouslyUseHTMLString: true
-                                    });
+                                    this.$message.error('action must contain attributes:action_url! ');
                                     return;
                                 }
 

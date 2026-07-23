@@ -1,178 +1,194 @@
-a,
+﻿a,
 a:link,
 a:visited,
 a:hover,
 a:focus {
   text-decoration: none !important;
 }
+/* Backend confirmation pages: keep SimpleUI button styling, refine the panel/table shell. */
+.delete-confirmation {
+  --confirm-accent: var(--su-input-accent, var(--primary, #409eff));
+  --confirm-bg: var(--su-input-bg, #fff);
+  --confirm-page-bg: var(--body-bg, #f5f7fa);
+  --confirm-text: var(--su-input-text, #303133);
+  --confirm-muted: var(--su-input-placeholder, #606266);
+  --confirm-border: var(--su-input-border, #dcdfe6);
+  --confirm-soft: var(--su-input-focus-ring, rgba(64, 158, 255, 0.08));
+}
 
-/* 确认页卡片（删除确认、批量操作确认等） */
-.admin-confirm-panel,
-#content-main .module.admin-confirm-panel {
-  margin: 0 !important;
-  margin-bottom: 16px !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+.delete-confirmation #content-main {
+  color: var(--confirm-text);
+}
+
+.delete-confirmation .admin-delete-confirm-form {
+  display: grid;
+  gap: 16px;
+}
+
+.delete-confirmation .admin-confirm-panel,
+.delete-confirmation #content-main .module.admin-confirm-panel {
   overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--confirm-border);
+  border-radius: 8px !important;
+  background: var(--confirm-bg);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
 }
 
-.admin-confirm-panel > h2,
-#content-main .module.admin-confirm-panel > h2 {
+.delete-confirmation .admin-confirm-panel > h2,
+.delete-confirmation #content-main .module.admin-confirm-panel > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
-  padding: 14px 16px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--confirm-border);
+  background:
+    linear-gradient(90deg, var(--confirm-soft), transparent 72%),
+    var(--confirm-bg) !important;
+  color: var(--confirm-text) !important;
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1.4;
-  border-radius: 0 !important;
-  border-bottom: none;
-  background: var(--su-input-accent, var(--primary, #409eff)) !important;
-  color: #fff !important;
 }
 
-.admin-confirm-panel > .help {
+.delete-confirmation .admin-confirm-panel > h2::before {
+  display: block;
+  width: 4px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--confirm-accent);
+  content: "";
+  flex: 0 0 auto;
+}
+
+.delete-confirmation .admin-confirm-panel > .help {
   margin: 0;
-  padding: 12px 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--confirm-border);
+  background: var(--confirm-soft);
+  color: var(--confirm-muted);
   font-size: 14px;
-  line-height: 1.6;
-  color: var(--su-input-text, #606266);
-  background: var(--su-input-focus-ring, rgba(64, 158, 255, 0.06));
-  border-bottom: 1px solid var(--su-input-border, #ebeef5);
+  line-height: 1.7;
 }
 
-.admin-confirm-panel--error > .help {
-  background: #fef0f0;
+.delete-confirmation .admin-confirm-panel--error > h2::before {
+  background: #f56c6c;
+}
+
+.delete-confirmation .admin-confirm-panel--warning > h2::before {
+  background: #e6a23c;
+}
+
+.delete-confirmation .admin-confirm-panel--error > .help {
+  background: rgba(245, 108, 108, 0.1);
   color: #c45656;
 }
 
-.admin-confirm-panel--warning > .help {
-  background: #fdf6ec;
+.delete-confirmation .admin-confirm-panel--warning > .help {
+  background: rgba(230, 162, 60, 0.12);
   color: #b88230;
 }
 
-.admin-confirm-panel__section {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--su-input-border, #ebeef5);
+.delete-confirmation .admin-confirm-panel__section {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--confirm-border);
 }
 
-.admin-confirm-panel__section:last-child {
+.delete-confirmation .admin-confirm-panel__section:last-child {
   border-bottom: none;
 }
 
-.admin-confirm-panel__section > h3 {
-  margin: 0 0 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--su-input-text, #303133);
-}
-
-.admin-confirm-panel__summary {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.admin-confirm-panel__summary > li {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--su-input-border, #dcdfe6);
-  background: var(--su-input-bg, #fff);
-  font-size: 13px;
-}
-
-.admin-confirm-panel__label {
-  color: var(--su-input-text, #606266);
-}
-
-.admin-confirm-panel__value {
-  min-width: 24px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--su-input-accent, var(--primary, #409eff));
-  color: #fff;
-  font-weight: 600;
-  text-align: center;
-}
-
-.admin-confirm-panel__object-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--su-input-border, #ebeef5);
-  border-radius: 0;
-  overflow: hidden;
-  background: var(--su-input-bg, #fff);
-}
-
-.admin-confirm-panel__object-list li {
-  padding: 10px 14px;
-  font-size: 13px;
-  line-height: 1.5;
-  border-bottom: 1px solid var(--su-input-border, #f2f3f5);
-  color: var(--su-input-text, #606266);
-}
-
-.admin-confirm-panel__object-list li:last-child {
-  border-bottom: none;
-}
-
-.admin-confirm-panel__object-list ul {
-  margin: 8px 0 0;
-  padding-left: 18px;
-}
-
-.admin-confirm-panel__object-list a {
-  color: var(--su-input-accent, var(--primary, #409eff)) !important;
-  font-weight: 500;
-}
-
-.admin-confirm-panel__section--table {
+.delete-confirmation .admin-confirm-panel__section--table {
   padding: 0 !important;
-  border-bottom: none;
 }
 
-.admin-confirm-panel__section--related {
-  padding: 12px 16px;
-}
-
-.admin-confirm-panel__table-scroll {
+.delete-confirmation .admin-confirm-panel__table-scroll {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  background: var(--confirm-bg);
 }
 
-.admin-confirm-panel__table {
+.delete-confirmation .admin-confirm-panel__table {
   width: 100%;
-  min-width: 640px;
-  border-collapse: collapse;
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: auto;
 }
 
-.admin-confirm-panel__section--table .admin-confirm-panel__table th,
-.admin-confirm-panel__section--table .admin-confirm-panel__table td {
-  padding: 10px 12px;
-  font-size: 13px;
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table th,
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table td {
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--confirm-border);
+  color: var(--confirm-text);
+  font-size: 14px;
+  line-height: 1.5;
   text-align: left;
   white-space: nowrap;
-  border-bottom: 1px solid var(--su-input-border, #f2f3f5);
 }
 
-.admin-confirm-panel__section--table .admin-confirm-panel__table thead th {
-  font-weight: 600;
-  color: var(--su-input-text, #303133);
-  background: var(--su-input-focus-ring, rgba(64, 158, 255, 0.04));
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table thead th {
+  background: var(--confirm-soft);
+  color: var(--confirm-muted);
+  font-weight: 700;
 }
 
-.admin-confirm-panel__section--table .admin-confirm-panel__table tbody tr:nth-child(even) td {
-  background: rgba(64, 158, 255, 0.02);
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table tbody tr:nth-child(even) td {
+  background: rgba(15, 23, 42, 0.018);
 }
 
-.admin-confirm-panel__section--table .admin-confirm-panel__table tbody tr:last-child td {
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table tbody tr:hover td {
+  background: var(--confirm-soft);
+}
+
+.delete-confirmation .admin-confirm-panel__section--table .admin-confirm-panel__table tbody tr:last-child td {
   border-bottom: none;
+}
+
+.delete-confirmation .admin-confirm-panel__section > h3 {
+  margin: 0 0 12px;
+  color: var(--confirm-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.delete-confirmation .admin-confirm-panel__summary > li,
+.delete-confirmation .admin-confirm-panel__object-list {
+  border-color: var(--confirm-border);
+  border-radius: 8px;
+  background: var(--confirm-bg);
+}
+
+.delete-confirmation .admin-confirm-panel__value {
+  background: var(--confirm-accent);
+}
+
+.delete-confirmation .admin-confirm-panel__object-list li {
+  border-bottom-color: var(--confirm-border);
+  color: var(--confirm-muted);
+}
+
+.delete-confirmation .admin-confirm-panel__object-list a {
+  color: var(--confirm-accent) !important;
+}
+
+.delete-confirmation .submit-row {
+  margin-top: 0 !important;
+  background: transparent !important;
+}
+
+@media (max-width: 767px) {
+  .delete-confirmation .admin-confirm-panel > h2,
+  .delete-confirmation #content-main .module.admin-confirm-panel > h2 {
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  .delete-confirmation .admin-confirm-panel > .help,
+  .delete-confirmation .admin-confirm-panel__section {
+    padding: 14px 16px;
+  }
 }
 
 .admin-delete-confirm-form .submit-row,
@@ -278,3 +294,4 @@ a:focus {
     flex-direction: column;
   }
 }
+
